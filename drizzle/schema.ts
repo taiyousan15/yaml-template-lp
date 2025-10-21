@@ -1,5 +1,16 @@
 import { pgTable, text, integer, timestamp, jsonb, boolean, varchar, uuid } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
+
+// Users (Manus OAuth認証ユーザー)
+export const users = pgTable('users', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  email: text('email').notNull().unique(),
+  name: text('name'),
+  role: varchar('role', { length: 20 }).default('user').notNull(), // 'admin' or 'user'
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
 
 // Template Sources (画像アップロード元)
 export const templateSources = pgTable('template_sources', {
@@ -116,3 +127,31 @@ export const imagesRelations = relations(images, ({ one }) => ({
     references: [lps.id],
   }),
 }));
+
+// Zod schemas for validation
+export const insertUserSchema = createInsertSchema(users);
+export const selectUserSchema = createSelectSchema(users);
+
+export const insertTemplateSourceSchema = createInsertSchema(templateSources);
+export const selectTemplateSourceSchema = createSelectSchema(templateSources);
+
+export const insertTemplateMappingSchema = createInsertSchema(templateMappings);
+export const selectTemplateMappingSchema = createSelectSchema(templateMappings);
+
+export const insertTemplateSchema = createInsertSchema(templates);
+export const selectTemplateSchema = createSelectSchema(templates);
+
+export const insertLpSchema = createInsertSchema(lps);
+export const selectLpSchema = createSelectSchema(lps);
+
+export const insertImageSchema = createInsertSchema(images);
+export const selectImageSchema = createSelectSchema(images);
+
+export const insertBillingSubscriptionSchema = createInsertSchema(billingSubscriptions);
+export const selectBillingSubscriptionSchema = createSelectSchema(billingSubscriptions);
+
+export const insertBillingPaymentSchema = createInsertSchema(billingPayments);
+export const selectBillingPaymentSchema = createSelectSchema(billingPayments);
+
+export const insertLogSchema = createInsertSchema(logs);
+export const selectLogSchema = createSelectSchema(logs);
