@@ -1,8 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    serverComponentsExternalPackages: ['pg', 'drizzle-orm'],
-  },
+  serverExternalPackages: ['pg', 'drizzle-orm'],
   images: {
     remotePatterns: [
       {
@@ -10,6 +8,20 @@ const nextConfig = {
         hostname: '**.amazonaws.com',
       },
     ],
+  },
+  webpack: (config, { isServer }) => {
+    // Konva canvas エラー回避
+    if (!isServer) {
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        canvas: false,
+        encoding: false,
+      };
+    } else {
+      // サーバーサイドでもcanvasを無視
+      config.externals = [...(config.externals || []), 'canvas'];
+    }
+    return config;
   },
 }
 

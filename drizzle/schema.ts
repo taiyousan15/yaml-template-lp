@@ -1,6 +1,6 @@
 import { pgTable, text, integer, timestamp, jsonb, boolean, varchar, uuid } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
+// import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 
 // Users (Manus OAuth認証ユーザー)
 export const users = pgTable('users', {
@@ -103,6 +103,54 @@ export const logs = pgTable('logs', {
   costTokensOut: integer('cost_tokens_out'),
 });
 
+// LP Knowledge Base (YAMLテンプレート分析から抽出されたナレッジ)
+export const lpKnowledge = pgTable('lp_knowledge', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  templateId: uuid('template_id').references(() => templates.id, { onDelete: 'cascade' }),
+  category: varchar('category', { length: 50 }).notNull(), // 'layout', 'copywriting', 'cta', 'color_scheme', 'conversion_pattern'
+  knowledgeType: varchar('knowledge_type', { length: 50 }).notNull(), // 'pattern', 'rule', 'best_practice', 'anti_pattern'
+  title: text('title').notNull(),
+  description: text('description').notNull(),
+  examples: jsonb('examples'), // 具体例
+  metrics: jsonb('metrics'), // 効果測定データ（CVR、滞在時間など）
+  tags: text('tags').array(),
+  confidence: integer('confidence').default(0), // 0-100: ナレッジの信頼度
+  usageCount: integer('usage_count').default(0), // このナレッジが使用された回数
+  successRate: integer('success_rate'), // 成功率（%）
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// Prompt Templates (ナレッジから生成されたプロンプトテンプレート)
+export const promptTemplates = pgTable('prompt_templates', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  name: text('name').notNull(),
+  purpose: varchar('purpose', { length: 50 }).notNull(), // 'hero', 'features', 'pricing', 'testimonials', 'faq', 'cta'
+  promptText: text('prompt_text').notNull(),
+  knowledgeIds: text('knowledge_ids').array(), // 参照しているナレッジID
+  variables: jsonb('variables'), // プロンプト内の変数定義
+  temperature: integer('temperature').default(70), // 0-100 (0.0-1.0に変換)
+  examples: jsonb('examples'), // サンプル出力
+  version: integer('version').default(1).notNull(),
+  isActive: boolean('is_active').default(true).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// Knowledge Analysis Jobs (分析ジョブの追跡)
+export const knowledgeAnalysisJobs = pgTable('knowledge_analysis_jobs', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  templateId: uuid('template_id').references(() => templates.id),
+  status: varchar('status', { length: 20 }).notNull(), // 'pending', 'analyzing', 'extracting', 'completed', 'failed'
+  stage: varchar('stage', { length: 50 }), // 'yaml_analysis', 'knowledge_extraction', 'prompt_generation'
+  progressPercent: integer('progress_percent').default(0),
+  resultJson: jsonb('result_json'),
+  errorMessage: text('error_message'),
+  tokensUsed: integer('tokens_used'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
 // Relations
 export const templateSourcesRelations = relations(templateSources, ({ one }) => ({
   // No direct relations defined yet
@@ -128,30 +176,24 @@ export const imagesRelations = relations(images, ({ one }) => ({
   }),
 }));
 
-// Zod schemas for validation
-export const insertUserSchema = createInsertSchema(users);
-export const selectUserSchema = createSelectSchema(users);
+// Zod schemas for validation (要drizzle-zod)
+// TODO: drizzle-ormを0.36+にアップグレード後に有効化
+// export const insertUserSchema = createInsertSchema(users);
+// export const selectUserSchema = createSelectSchema(users);
+// export const insertTemplateSourceSchema = createInsertSchema(templateSources);
+// export const selectTemplateSourceSchema = createSelectSchema(templateSources);
+// export const insertTemplateMappingSchema = createInsertSchema(templateMappings);
+// export const selectTemplateMappingSchema = createSelectSchema(templateMappings);
+// export const insertTemplateSchema = createInsertSchema(templates);
+// export const selectTemplateSchema = createSelectSchema(templates);
+// export const insertLpSchema = createInsertSchema(lps);
+// export const selectLpSchema = createSelectSchema(lps);
+// export const insertImageSchema = createInsertSchema(images);
+// export const selectImageSchema = createSelectSchema(images);
 
-export const insertTemplateSourceSchema = createInsertSchema(templateSources);
-export const selectTemplateSourceSchema = createSelectSchema(templateSources);
-
-export const insertTemplateMappingSchema = createInsertSchema(templateMappings);
-export const selectTemplateMappingSchema = createSelectSchema(templateMappings);
-
-export const insertTemplateSchema = createInsertSchema(templates);
-export const selectTemplateSchema = createSelectSchema(templates);
-
-export const insertLpSchema = createInsertSchema(lps);
-export const selectLpSchema = createSelectSchema(lps);
-
-export const insertImageSchema = createInsertSchema(images);
-export const selectImageSchema = createSelectSchema(images);
-
-export const insertBillingSubscriptionSchema = createInsertSchema(billingSubscriptions);
-export const selectBillingSubscriptionSchema = createSelectSchema(billingSubscriptions);
-
-export const insertBillingPaymentSchema = createInsertSchema(billingPayments);
-export const selectBillingPaymentSchema = createSelectSchema(billingPayments);
-
-export const insertLogSchema = createInsertSchema(logs);
-export const selectLogSchema = createSelectSchema(logs);
+// export const insertBillingSubscriptionSchema = createInsertSchema(billingSubscriptions);
+// export const selectBillingSubscriptionSchema = createSelectSchema(billingSubscriptions);
+// export const insertBillingPaymentSchema = createInsertSchema(billingPayments);
+// export const selectBillingPaymentSchema = createSelectSchema(billingPayments);
+// export const insertLogSchema = createInsertSchema(logs);
+// export const selectLogSchema = createSelectSchema(logs);

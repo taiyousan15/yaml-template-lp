@@ -1,8 +1,14 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { Stage, Layer, Rect, Transformer, Image as KonvaImage } from 'react-konva'
+import dynamic from 'next/dynamic'
 import { ChromePicker } from 'react-color'
+
+// Lazy load Konva components to avoid SSR issues
+const Stage = dynamic(() => import('react-konva').then((mod) => mod.Stage), { ssr: false })
+const Layer = dynamic(() => import('react-konva').then((mod) => mod.Layer), { ssr: false })
+const Rect = dynamic(() => import('react-konva').then((mod) => mod.Rect), { ssr: false })
+const Transformer = dynamic(() => import('react-konva').then((mod) => mod.Transformer), { ssr: false })
 
 interface Block {
   id: string

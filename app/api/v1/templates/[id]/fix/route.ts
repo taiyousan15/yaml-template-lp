@@ -12,9 +12,10 @@ interface FixOperation {
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const user = await getSession(req);
     requireAuth(user);
 
@@ -32,7 +33,7 @@ export async function POST(
     const [template] = await db
       .select()
       .from(templates)
-      .where(eq(templates.id, params.id));
+      .where(eq(templates.id, id));
 
     if (!template) {
       return NextResponse.json(
@@ -64,13 +65,13 @@ export async function POST(
         yaml: updatedYaml,
         updatedAt: new Date(),
       })
-      .where(eq(templates.id, params.id));
+      .where(eq(templates.id, id));
 
     // マッピング更新（差分メトリクス改善）
     const [mapping] = await db
       .select()
       .from(templateMappings)
-      .where(eq(templateMappings.templateId, params.id));
+      .where(eq(templateMappings.templateId, id));
 
     if (mapping) {
       const newDiffMetrics = {
@@ -89,8 +90,8 @@ export async function POST(
     }
 
     return NextResponse.json({
-      templateId: params.id,
-      yamlUrl: `https://example.com/templates/${params.id}.yaml`,
+      templateId: id,
+      yamlUrl: `https://example.com/templates/${id}.yaml`,
       diffMetrics: {
         ssim: 0.94,
         colorDelta: 0.03,

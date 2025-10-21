@@ -1,8 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Stage, Layer, Rect, Text as KonvaText, Transformer } from 'react-konva';
+import { use, useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { ChromePicker } from 'react-color';
+
+// Lazy load Konva components to avoid SSR issues
+const Stage = dynamic(() => import('react-konva').then((mod) => mod.Stage), { ssr: false });
+const Layer = dynamic(() => import('react-konva').then((mod) => mod.Layer), { ssr: false });
+const Rect = dynamic(() => import('react-konva').then((mod) => mod.Rect), { ssr: false });
+const Transformer = dynamic(() => import('react-konva').then((mod) => mod.Transformer), { ssr: false });
 
 interface DetectedBlock {
   id: string;
@@ -13,7 +19,8 @@ interface DetectedBlock {
   confidence?: number;
 }
 
-export default function WizardPage({ params }: { params: { id: string } }) {
+export default function WizardPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const [blocks, setBlocks] = useState<DetectedBlock[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showColorPicker, setShowColorPicker] = useState(false);
@@ -48,7 +55,7 @@ export default function WizardPage({ params }: { params: { id: string } }) {
       },
     ]);
     setDiffMetrics({ ssim: 0.92, colorDelta: 0.05, layoutDelta: 0.03 });
-  }, [params.id]);
+  }, [id]);
 
   const selectedBlock = blocks.find((b) => b.id === selectedId);
 
@@ -70,7 +77,7 @@ export default function WizardPage({ params }: { params: { id: string } }) {
 
   const handleSave = async () => {
     // TODO: APIに送信
-    const response = await fetch(`/api/v1/templates/${params.id}/fix`, {
+    const response = await fetch(`/api/v1/templates/${id}/fix`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

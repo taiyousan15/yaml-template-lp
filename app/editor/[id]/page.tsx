@@ -1,7 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { use, useState } from 'react';
 import Link from 'next/link';
+
+// Prevent static generation for this page
+export const dynamic = 'force-dynamic';
 
 interface Variable {
   name: string;
@@ -11,7 +14,8 @@ interface Variable {
   description?: string;
 }
 
-export default function EditorPage({ params }: { params: { id: string } }) {
+export default function EditorPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const [isGenerating, setIsGenerating] = useState(false);
   const [showPreview, setShowPreview] = useState(true);
 

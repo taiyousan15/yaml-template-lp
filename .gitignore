@@ -8,13 +8,32 @@ reports/
 # Environment
 .env
 .env.local
+.env.production
 
 # Dependencies
 node_modules/
 target/
+
+# Next.js
+.next/
+out/
+build/
+dist/
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Testing
+coverage/
+.nyc_output/
 
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
+
+# OS
+.DS_Store
+Thumbs.db
