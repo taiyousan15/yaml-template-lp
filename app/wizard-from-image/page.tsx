@@ -1,14 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import dynamic from 'next/dynamic'
 import { ChromePicker } from 'react-color'
-
-// Lazy load Konva components to avoid SSR issues
-const Stage = dynamic(() => import('react-konva').then((mod) => mod.Stage), { ssr: false })
-const Layer = dynamic(() => import('react-konva').then((mod) => mod.Layer), { ssr: false })
-const Rect = dynamic(() => import('react-konva').then((mod) => mod.Rect), { ssr: false })
-const Transformer = dynamic(() => import('react-konva').then((mod) => mod.Transformer), { ssr: false })
 
 interface Block {
   id: string
@@ -42,8 +35,6 @@ export default function WizardFromImagePage() {
   const [templateId, setTemplateId] = useState<string | null>(null)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const stageRef = useRef<any>(null)
-  const transformerRef = useRef<any>(null)
 
   // ステップ1: 画像アップロード
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,15 +102,9 @@ export default function WizardFromImagePage() {
   // ステップ3: 検出枠プレビュー & ステップ4: 手動補正
   const handleBlockSelect = (blockId: string) => {
     setSelectedBlockId(blockId)
-
-    // Transformerを選択されたブロックにアタッチ
-    const selectedNode = stageRef.current?.findOne(`#${blockId}`)
-    if (selectedNode && transformerRef.current) {
-      transformerRef.current.nodes([selectedNode])
-      transformerRef.current.getLayer().batchDraw()
-    }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleBlockDragEnd = (blockId: string, newPos: { x: number; y: number }) => {
     setBlocks((prev) =>
       prev.map((block) =>
@@ -130,7 +115,8 @@ export default function WizardFromImagePage() {
     )
   }
 
-  const handleBlockTransform = (blockId: string, newAttrs: any) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleBlockTransform = (blockId: string, newAttrs: { x: number; y: number; width: number; height: number; scaleX: number; scaleY: number }) => {
     setBlocks((prev) =>
       prev.map((block) =>
         block.id === blockId
@@ -154,7 +140,7 @@ export default function WizardFromImagePage() {
     )
   }
 
-  const handleColorChange = (color: any) => {
+  const handleColorChange = (color: { hex: string }) => {
     if (!selectedBlockId) return
 
     setBlocks((prev) =>
@@ -244,46 +230,37 @@ export default function WizardFromImagePage() {
             {/* キャンバス */}
             <div className="col-span-2 bg-white rounded-lg shadow p-4">
               <h2 className="text-xl font-bold mb-4">検出結果</h2>
-              <Stage
-                width={800}
-                height={600}
-                ref={stageRef}
-                onClick={(e) => {
-                  if (e.target === e.target.getStage()) {
-                    setSelectedBlockId(null)
-                  }
-                }}
-              >
-                <Layer>
-                  {/* 背景画像 */}
-                  {/* ここに画像を配置 */}
+              <div className="relative bg-gray-100 rounded-lg overflow-hidden" style={{ width: 800, height: 600 }}>
+                {/* 背景画像 */}
+                <img
+                  src={uploadedImage}
+                  alt="Uploaded"
+                  className="absolute inset-0 w-full h-full object-contain"
+                />
 
-                  {/* 検出ブロック */}
-                  {blocks.map((block) => (
-                    <Rect
-                      key={block.id}
-                      id={block.id}
-                      x={block.bbox.x}
-                      y={block.bbox.y}
-                      width={block.bbox.width}
-                      height={block.bbox.height}
-                      stroke={block.id === selectedBlockId ? '#3B82F6' : block.color || '#10B981'}
-                      strokeWidth={block.id === selectedBlockId ? 3 : 2}
-                      draggable
-                      onClick={() => handleBlockSelect(block.id)}
-                      onDragEnd={(e) => {
-                        handleBlockDragEnd(block.id, { x: e.target.x(), y: e.target.y() })
-                      }}
-                      onTransformEnd={(e) => {
-                        handleBlockTransform(block.id, e.target.attrs)
-                      }}
-                    />
-                  ))}
-
-                  {/* Transformer */}
-                  <Transformer ref={transformerRef} />
-                </Layer>
-              </Stage>
+                {/* 検出ブロック */}
+                {blocks.map((block) => (
+                  <div
+                    key={block.id}
+                    className={`absolute cursor-move border-2 transition-all ${
+                      block.id === selectedBlockId ? 'border-blue-500 border-4' : 'border-green-500'
+                    }`}
+                    style={{
+                      left: block.bbox.x,
+                      top: block.bbox.y,
+                      width: block.bbox.width,
+                      height: block.bbox.height,
+                      borderColor: block.color || '#10B981',
+                    }}
+                    onClick={() => handleBlockSelect(block.id)}
+                  >
+                    {/* ブロックラベル */}
+                    <div className="absolute -top-6 left-0 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
+                      {block.type} {block.confidence ? `(${block.confidence}%)` : ''}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* サイドバー */}

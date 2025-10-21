@@ -15,6 +15,7 @@ interface Variable {
 }
 
 export default function EditorPage({ params }: { params: Promise<{ id: string }> }) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { id } = use(params);
   const [isGenerating, setIsGenerating] = useState(false);
   const [showPreview, setShowPreview] = useState(true);

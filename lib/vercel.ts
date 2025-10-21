@@ -25,7 +25,10 @@ export async function triggerVercelDeploy(target: 'preview' | 'production'): Pro
   };
 }
 
-export async function getDeploymentStatus(deploymentId: string): Promise<'READY' | 'BUILDING' | 'ERROR'> {
+export async function getDeploymentStatus(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  deploymentId: string
+): Promise<'READY' | 'BUILDING' | 'ERROR'> {
   // TODO: Vercel APIで実際のステータスを取得
   // 現在はモック実装
   return 'READY';

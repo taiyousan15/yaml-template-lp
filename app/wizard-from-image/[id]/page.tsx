@@ -8,7 +8,6 @@ import { ChromePicker } from 'react-color';
 const Stage = dynamic(() => import('react-konva').then((mod) => mod.Stage), { ssr: false });
 const Layer = dynamic(() => import('react-konva').then((mod) => mod.Layer), { ssr: false });
 const Rect = dynamic(() => import('react-konva').then((mod) => mod.Rect), { ssr: false });
-const Transformer = dynamic(() => import('react-konva').then((mod) => mod.Transformer), { ssr: false });
 
 interface DetectedBlock {
   id: string;
@@ -24,7 +23,6 @@ export default function WizardPage({ params }: { params: Promise<{ id: string }>
   const [blocks, setBlocks] = useState<DetectedBlock[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showColorPicker, setShowColorPicker] = useState(false);
-  const [imageUrl, setImageUrl] = useState('');
   const [diffMetrics, setDiffMetrics] = useState({ ssim: 0, colorDelta: 0, layoutDelta: 0 });
 
   useEffect(() => {
@@ -69,7 +67,7 @@ export default function WizardPage({ params }: { params: Promise<{ id: string }>
     }
   };
 
-  const handleColorChange = (color: any) => {
+  const handleColorChange = (color: { hex: string }) => {
     if (selectedId) {
       handleBlockUpdate(selectedId, { color: color.hex });
     }

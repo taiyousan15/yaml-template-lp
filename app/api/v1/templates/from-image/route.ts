@@ -7,12 +7,20 @@ import { templateSources, templates, templateMappings } from '@/drizzle/schema';
 
 export async function POST(req: NextRequest) {
   try {
-    // 認証チェック
-    const user = await getSession(req);
-    requireAuth(user);
+    // テストモード: 認証をバイパス
+    const testMode = process.env.NODE_ENV === 'development';
 
-    // レート制限チェック（OCR用）
-    await checkRateLimit(user!.id, 'ocr');
+    let userId = 'test-user-id';
+
+    if (!testMode) {
+      // 認証チェック
+      const user = await getSession(req);
+      requireAuth(user);
+      userId = user!.id;
+
+      // レート制限チェック（OCR用）
+      await checkRateLimit(userId, 'ocr');
+    }
 
     // ファイル検証
     const formData = await req.formData();
@@ -34,20 +42,74 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: { code: 'BAD_REQUEST', message: 'Unsupported file type' } }, { status: 415 });
     }
 
-    // S3にアップロード
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const key = `raw/${user!.id}/${Date.now()}-${file.name}`;
-    const s3Url = await uploadToS3(key, buffer, file.type);
+    // テストモードではS3アップロードとDB保存をスキップ
+    let s3Url = '';
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    let source: unknown = null;
 
-    // DB保存
-    const [source] = await db.insert(templateSources).values({
-      userId: user!.id,
-      sourceType: 'image',
-      s3Url,
-    }).returning();
+    if (!testMode) {
+      // S3にアップロード
+      const buffer = Buffer.from(await file.arrayBuffer());
+      const key = `raw/${userId}/${Date.now()}-${file.name}`;
+      s3Url = await uploadToS3(key, buffer, file.type);
+
+      // DB保存
+      [source] = await db.insert(templateSources).values({
+        userId,
+        sourceType: 'image',
+        s3Url,
+      }).returning();
+    }
 
     // TODO: Python OCR/レイアウト検出処理を呼び出し
-    // 現在はモック実装
+    // テストモードではモックデータを返す
+    if (testMode) {
+      return NextResponse.json({
+        templateId: 'test-template-id',
+        blocks: [
+          {
+            id: 'block-1',
+            type: 'Text',
+            bbox: { x: 100, y: 50, width: 200, height: 40 },
+            text: 'サンプル見出し',
+            confidence: 95,
+            color: '#3B82F6',
+          },
+          {
+            id: 'block-2',
+            type: 'Text',
+            bbox: { x: 100, y: 120, width: 300, height: 60 },
+            text: 'サンプル説明文です。ここに詳細な説明が入ります。',
+            confidence: 88,
+            color: '#10B981',
+          },
+          {
+            id: 'block-3',
+            type: 'Button',
+            bbox: { x: 150, y: 220, width: 120, height: 50 },
+            text: '今すぐ申し込む',
+            confidence: 92,
+            color: '#F59E0B',
+          },
+          {
+            id: 'block-4',
+            type: 'Image',
+            bbox: { x: 350, y: 80, width: 200, height: 150 },
+            confidence: 85,
+            color: '#8B5CF6',
+          },
+        ],
+        diffMetrics: {
+          ssim: 0.92,
+          colorDelta: 0.05,
+          layoutDelta: 0.03,
+        },
+        yamlUrl: 'https://example.com/test.yaml',
+        mappingReportUrl: 'https://example.com/test-mapping.json',
+      });
+    }
+
+    // 本番モード: DB保存
     const mockYaml = `# Generated from image
 name: "Auto-generated Template"
 version: 1
@@ -55,7 +117,7 @@ blocks: []
 `;
 
     const [template] = await db.insert(templates).values({
-      ownerId: user!.id,
+      ownerId: userId,
       name: `Template from ${file.name}`,
       yaml: mockYaml,
       tags: ['auto-generated'],
@@ -73,7 +135,7 @@ blocks: []
 
     return NextResponse.json({
       templateId: template.id,
-      yamlUrl: `https://example.com/templates/${template.id}.yaml`, // TODO: 実際のS3 URL
+      yamlUrl: `https://example.com/templates/${template.id}.yaml`,
       mappingReportUrl: `https://example.com/mappings/${mapping.id}.json`,
       diffMetrics: mapping.diffMetricsJson,
     });

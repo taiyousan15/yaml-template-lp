@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { lpKnowledge } from '@/drizzle/schema'
-import { eq, desc, and, sql, inArray } from 'drizzle-orm'
+import { eq, desc, and, sql } from 'drizzle-orm'
 
 /**
  * GET /api/v1/knowledge/list
