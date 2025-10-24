@@ -1,6 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { z } from 'zod'
 import YAML from 'yaml'
+import { createMessageWithRetry } from './anthropic-retry'
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -107,7 +108,7 @@ JSON形式:
   "recommendations": ["提案1", "提案2", ...]
 }`
 
-  const response = await anthropic.messages.create({
+  const response = await createMessageWithRetry(anthropic, {
     model: 'claude-3-5-sonnet-20241022',
     max_tokens: 2000,
     temperature: 0.2,
@@ -191,7 +192,7 @@ JSON形式:
 
 **重要**: 少なくとも5-10個の具体的なナレッジを抽出してください。`
 
-  const response = await anthropic.messages.create({
+  const response = await createMessageWithRetry(anthropic, {
     model: 'claude-3-5-sonnet-20241022',
     max_tokens: 3000,
     temperature: 0.3,
@@ -268,7 +269,7 @@ JSON形式:
 
 **重要**: 各プロンプトには具体的なナレッジを組み込み、実用的な指示を含めてください。`
 
-  const response = await anthropic.messages.create({
+  const response = await createMessageWithRetry(anthropic, {
     model: 'claude-3-5-sonnet-20241022',
     max_tokens: 4000,
     temperature: 0.4,

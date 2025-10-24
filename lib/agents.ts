@@ -1,5 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { z } from 'zod'
+import { createMessageWithRetry } from './anthropic-retry'
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -50,7 +51,7 @@ ${JSON.stringify(imageBlocks, null, 2)}
 
 JSON形式で返してください。`
 
-  const response = await anthropic.messages.create({
+  const response = await createMessageWithRetry(anthropic, {
     model: 'claude-3-5-sonnet-20241022',
     max_tokens: 800,
     temperature: 0.2,
@@ -122,7 +123,7 @@ JSON形式で以下のように返してください:
   ]
 }`
 
-  const response = await anthropic.messages.create({
+  const response = await createMessageWithRetry(anthropic, {
     model: 'claude-3-5-sonnet-20241022',
     max_tokens: 1200,
     temperature: temperature,
@@ -178,7 +179,7 @@ JSON形式:
   }
 }`
 
-  const response = await anthropic.messages.create({
+  const response = await createMessageWithRetry(anthropic, {
     model: 'claude-3-5-sonnet-20241022',
     max_tokens: 800,
     temperature: 0.3,
@@ -327,7 +328,7 @@ JSON形式で以下のように返してください:
   ]
 }`
 
-  const response = await anthropic.messages.create({
+  const response = await createMessageWithRetry(anthropic, {
     model: 'claude-3-5-sonnet-20241022',
     max_tokens: 1500,
     temperature: temperature,

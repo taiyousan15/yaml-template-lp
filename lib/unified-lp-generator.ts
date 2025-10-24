@@ -5,6 +5,7 @@ import { mrtStyleAgent, scoreMrTStyle, MrT_STYLE_KNOWLEDGE } from './mrt-style-a
 import { db } from './db'
 import { lpKnowledge } from '@/drizzle/schema'
 import { desc } from 'drizzle-orm'
+import { createMessageWithRetry } from './anthropic-retry'
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -275,7 +276,7 @@ JSON形式で返してください:
   }
 }`
 
-  const response = await anthropic.messages.create({
+  const response = await createMessageWithRetry(anthropic, {
     model: 'claude-3-5-sonnet-20241022',
     max_tokens: 4000,
     temperature: input.temperature,
@@ -412,7 +413,7 @@ JSON形式で返してください:
   }
 }`
 
-  const response = await anthropic.messages.create({
+  const response = await createMessageWithRetry(anthropic, {
     model: 'claude-3-5-sonnet-20241022',
     max_tokens: 5000,
     temperature: input.temperature,

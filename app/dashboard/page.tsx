@@ -162,7 +162,7 @@ export default function DashboardPage() {
         </div>
 
         {/* クイックアクション */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-7 gap-6 mb-8">
           <Link
             href="/generate"
             className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg shadow-lg p-6 hover:shadow-xl transition group text-white"
@@ -328,6 +328,33 @@ export default function DashboardPage() {
             </h3>
             <p className="text-gray-600 text-sm">
               AI文案生成とライブプレビューで効率的に作成
+            </p>
+          </Link>
+
+          <Link
+            href="/yaml-editor"
+            className="bg-gradient-to-br from-orange-500 to-red-600 rounded-lg shadow-lg p-6 hover:shadow-xl transition group text-white"
+          >
+            <div className="flex items-center justify-center h-16 w-16 rounded-full bg-white/20 mb-4 group-hover:bg-white/30 transition">
+              <svg
+                className="h-8 w-8"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+              </svg>
+            </div>
+            <h3 className="text-lg font-semibold mb-2">
+              📝 YAMLエディタ
+            </h3>
+            <p className="text-orange-100 text-sm">
+              YAMLをアップロードして文字を編集・ライブプレビュー
             </p>
           </Link>
         </div>

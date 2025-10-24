@@ -1,0 +1,33 @@
+# テスト用エラーYAML（意図的にエラーを含む）
+# このファイルは自動修復機能のテスト用です
+
+meta:
+  title: "サンプルLP"
+  # ↑ 引用符が閉じられていない
+  description: "これはテスト用のYAMLファイルです"
+
+hero:
+  headline: "{{product_name}}で人生が変わる"
+  subheadline: "{{target_audience}}のための{{main_benefit}}"
+  # 以下は複数行にまたがる不正な文字列
+  # - テキスト1: "これは"
+  # 複数行のテスト""
+  cta_text: "{{cta_label}}"
+
+# コメントアウトされたセクション
+# sections:
+#   - name: "hero"
+#     text: "たった5日"であなたの中に眠る
+#     隠れた才能を覚醒させて
+#     A...""
+#   - name: "cta"
+#     text: "オンラインでの参加型の"
+#     5日間アイデアソン...""
+#   - name: "urgency"
+#     text: "10/20までの期間限定で無料で招待"
+
+features:
+  - title: "特徴1"
+    description: "説明文1"
+  - title: "特徴2"
+    description: "説明文2"

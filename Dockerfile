@@ -14,7 +14,7 @@ WORKDIR /app
 
 # Node.js依存関係のインストール
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm ci
 
 # Python依存関係のインストール（DeepSeek-OCR除外）
 COPY python/requirements.txt ./python/

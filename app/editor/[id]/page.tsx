@@ -28,6 +28,15 @@ interface Block {
   color?: string;
 }
 
+interface YamlError {
+  message: string;
+  line?: number;
+  column?: number;
+  snippet?: string;
+  type: 'parse' | 'validation';
+  suggestion?: string;
+}
+
 export default function EditorPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -40,6 +49,10 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
   const [yamlTemplate, setYamlTemplate] = useState<any>(null);
   const [yamlContent, setYamlContent] = useState<string>('');
   const [uploadedYamlFile, setUploadedYamlFile] = useState<File | null>(null);
+  const [yamlError, setYamlError] = useState<YamlError | null>(null);
+  const [showYamlEditor, setShowYamlEditor] = useState(false);
+  const [editingYaml, setEditingYaml] = useState<string>('');
+  const [liveValidationError, setLiveValidationError] = useState<YamlError | null>(null);
 
   // デフォルトのテンプレート変数
   const defaultVariables: Variable[] = [
@@ -276,6 +289,104 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
     return variables;
   };
 
+  // YAML詳細エラー解析
+  const parseYamlError = (error: any, yamlText: string): YamlError => {
+    const errorMessage = error.message || String(error);
+    let line: number | undefined;
+    let column: number | undefined;
+    let snippet: string | undefined;
+    let suggestion: string | undefined;
+
+    // エラー行番号を抽出
+    const lineMatch = errorMessage.match(/at line (\d+)/i) || errorMessage.match(/line (\d+)/i);
+    if (lineMatch) {
+      line = parseInt(lineMatch[1], 10);
+    }
+
+    // カラム番号を抽出
+    const columnMatch = errorMessage.match(/column (\d+)/i);
+    if (columnMatch) {
+      column = parseInt(columnMatch[1], 10);
+    }
+
+    // エラー箇所のスニペットを生成
+    if (line && yamlText) {
+      const lines = yamlText.split('\n');
+      const startLine = Math.max(0, line - 2);
+      const endLine = Math.min(lines.length, line + 1);
+      const snippetLines = lines.slice(startLine, endLine);
+
+      snippet = snippetLines
+        .map((l, i) => {
+          const lineNum = startLine + i + 1;
+          const marker = lineNum === line ? '→ ' : '  ';
+          return `${marker}${lineNum}: ${l}`;
+        })
+        .join('\n');
+    }
+
+    // エラーの種類に応じた修復提案
+    if (errorMessage.includes('unexpected end')) {
+      suggestion = '引用符やブラケットが閉じられていない可能性があります。YAML構文を確認してください。';
+    } else if (errorMessage.includes('duplicat')) {
+      suggestion = '重複したキーがあります。同じキーは同じレベルに1つだけ定義してください。';
+    } else if (errorMessage.includes('indent')) {
+      suggestion = 'インデントが不正です。YAMLではスペース2つまたは4つでインデントしてください（タブは使用できません）。';
+    } else if (errorMessage.includes('unquot') || errorMessage.includes('quot')) {
+      suggestion = '特殊文字を含む値は引用符で囲む必要があります。例: "値: 特殊文字"';
+    } else if (errorMessage.includes('mapping')) {
+      suggestion = 'キーと値のマッピングが正しくありません。「キー: 値」の形式で記述してください。';
+    } else {
+      suggestion = 'YAML構文エラーです。インデント、引用符、特殊文字の使用を確認してください。';
+    }
+
+    return {
+      message: errorMessage,
+      line,
+      column,
+      snippet,
+      type: 'parse',
+      suggestion,
+    };
+  };
+
+  // YAML自動修復
+  const autoFixYaml = (yamlText: string, error: YamlError): string => {
+    let fixed = yamlText;
+
+    // 一般的な修復パターン
+    if (error.message.includes('indent')) {
+      // タブをスペースに変換
+      fixed = fixed.replace(/\t/g, '  ');
+    }
+
+    if (error.message.includes('unquot') || error.message.includes('special')) {
+      // 特殊文字を含む値に引用符を追加
+      const lines = fixed.split('\n');
+      const fixedLines = lines.map((line) => {
+        // コロンの後ろの値に特殊文字が含まれている場合
+        const match = line.match(/^(\s*[^:]+:\s*)([^"'][^#\n]*[:#@&*!|>%{}\[\]])(.*)$/);
+        if (match) {
+          return `${match[1]}"${match[2].trim()}"${match[3]}`;
+        }
+        return line;
+      });
+      fixed = fixedLines.join('\n');
+    }
+
+    return fixed;
+  };
+
+  // YAMLバリデーション（リアルタイム用）
+  const validateYaml = (yamlText: string): YamlError | null => {
+    try {
+      yaml.load(yamlText);
+      return null;
+    } catch (error) {
+      return parseYamlError(error, yamlText);
+    }
+  };
+
   // YAMLファイルアップロード処理
   const handleYamlUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -283,12 +394,22 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
 
     try {
       const text = await file.text();
+      const validationError = validateYaml(text);
+
+      if (validationError) {
+        setYamlError(validationError);
+        setEditingYaml(text);
+        setShowYamlEditor(true);
+        return;
+      }
+
       const parsed = yaml.load(text);
 
       setYamlContent(text);
       setYamlTemplate(parsed);
       setUploadedYamlFile(file);
       setTemplateName(file.name.replace('.yaml', '').replace('.yml', ''));
+      setYamlError(null);
 
       // 変数を抽出
       const extractedVars = extractVariablesFromYaml(text);
@@ -302,7 +423,72 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
       alert('YAMLテンプレートを読み込みました！');
     } catch (error) {
       console.error('YAML parse error:', error);
-      alert('YAMLファイルの解析に失敗しました。');
+      const parsedError = parseYamlError(error, '');
+      setYamlError(parsedError);
+    }
+  };
+
+  // YAML編集を開く
+  const openYamlEditor = () => {
+    setEditingYaml(yamlContent);
+    setShowYamlEditor(true);
+    setLiveValidationError(null);
+  };
+
+  // YAML編集中のリアルタイムバリデーション
+  const handleYamlEdit = (newYaml: string) => {
+    setEditingYaml(newYaml);
+    const error = validateYaml(newYaml);
+    setLiveValidationError(error);
+  };
+
+  // YAML編集を保存
+  const saveYamlEdit = () => {
+    const error = validateYaml(editingYaml);
+
+    if (error) {
+      setYamlError(error);
+      return;
+    }
+
+    try {
+      const parsed = yaml.load(editingYaml);
+      setYamlContent(editingYaml);
+      setYamlTemplate(parsed);
+      setYamlError(null);
+      setShowYamlEditor(false);
+
+      // 変数を抽出
+      const extractedVars = extractVariablesFromYaml(editingYaml);
+      if (extractedVars.length > 0) {
+        setVariables(extractedVars);
+        setFormValues(
+          Object.fromEntries(extractedVars.map((v) => [v.name, v.defaultValue || '']))
+        );
+      }
+
+      alert('YAMLを更新しました！');
+    } catch (error) {
+      const parsedError = parseYamlError(error, editingYaml);
+      setYamlError(parsedError);
+    }
+  };
+
+  // YAML自動修復を適用
+  const applyAutoFix = () => {
+    if (!yamlError) return;
+
+    const fixed = autoFixYaml(editingYaml, yamlError);
+    setEditingYaml(fixed);
+
+    // 修復後に再バリデーション
+    const error = validateYaml(fixed);
+    setLiveValidationError(error);
+
+    if (!error) {
+      alert('自動修復を適用しました！YAMLが正常になりました。');
+    } else {
+      alert('自動修復を試みましたが、まだエラーがあります。手動で修正してください。');
     }
   };
 
@@ -458,10 +644,81 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
                 </div>
 
                 {yamlTemplate && (
-                  <div className="text-sm text-green-600 bg-green-50 p-3 rounded">
-                    ✓ {templateName} を読み込みました
-                    <div className="text-xs text-gray-600 mt-1">
-                      {variables.length}個の変数を検出
+                  <div className="space-y-2">
+                    <div className="text-sm text-green-600 bg-green-50 p-3 rounded flex items-center justify-between">
+                      <div>
+                        <div>✓ {templateName} を読み込みました</div>
+                        <div className="text-xs text-gray-600 mt-1">
+                          {variables.length}個の変数を検出
+                        </div>
+                      </div>
+                      <button
+                        onClick={openYamlEditor}
+                        className="px-3 py-1 text-xs bg-white text-indigo-600 border border-indigo-300 rounded hover:bg-indigo-50"
+                      >
+                        編集
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* YAMLエラー表示 */}
+                {yamlError && !showYamlEditor && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <div className="flex items-start">
+                      <svg
+                        className="w-5 h-5 text-red-500 mt-0.5 mr-2 flex-shrink-0"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      <div className="flex-1">
+                        <h3 className="text-sm font-semibold text-red-800 mb-2">
+                          YAMLパースエラー
+                        </h3>
+                        <p className="text-sm text-red-700 mb-2">{yamlError.message}</p>
+
+                        {yamlError.line && (
+                          <div className="text-xs text-red-600 mb-2">
+                            エラー位置: 行 {yamlError.line}
+                            {yamlError.column && `, 列 ${yamlError.column}`}
+                          </div>
+                        )}
+
+                        {yamlError.snippet && (
+                          <div className="bg-white rounded border border-red-200 p-2 mb-2">
+                            <pre className="text-xs font-mono text-gray-800 whitespace-pre-wrap">
+                              {yamlError.snippet}
+                            </pre>
+                          </div>
+                        )}
+
+                        {yamlError.suggestion && (
+                          <div className="bg-yellow-50 border border-yellow-200 rounded p-2 mb-3">
+                            <div className="text-xs font-semibold text-yellow-800 mb-1">
+                              💡 修復提案:
+                            </div>
+                            <div className="text-xs text-yellow-700">
+                              {yamlError.suggestion}
+                            </div>
+                          </div>
+                        )}
+
+                        <button
+                          onClick={() => {
+                            setShowYamlEditor(true);
+                            setEditingYaml(yamlContent || '');
+                          }}
+                          className="px-3 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700"
+                        >
+                          YAMLを編集して修正
+                        </button>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -632,6 +889,169 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
           )}
         </div>
       </div>
+
+      {/* YAML編集モーダル */}
+      {showYamlEditor && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col">
+            {/* モーダルヘッダー */}
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <div>
+                <h2 className="text-xl font-semibold">YAML編集</h2>
+                <p className="text-sm text-gray-500 mt-1">
+                  編集中にリアルタイムでバリデーションを実行します
+                </p>
+              </div>
+              <button
+                onClick={() => setShowYamlEditor(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            {/* エラー表示エリア */}
+            {(liveValidationError || yamlError) && (
+              <div className="px-6 pt-4">
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                  <div className="flex items-start">
+                    <svg
+                      className="w-5 h-5 text-red-500 mt-0.5 mr-2 flex-shrink-0"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <div className="flex-1">
+                      <h3 className="text-sm font-semibold text-red-800 mb-1">
+                        エラーが見つかりました
+                      </h3>
+                      <p className="text-sm text-red-700 mb-2">
+                        {(liveValidationError || yamlError)?.message}
+                      </p>
+
+                      {(liveValidationError || yamlError)?.line && (
+                        <div className="text-xs text-red-600 mb-2">
+                          エラー位置: 行 {(liveValidationError || yamlError)?.line}
+                          {(liveValidationError || yamlError)?.column &&
+                            `, 列 ${(liveValidationError || yamlError)?.column}`}
+                        </div>
+                      )}
+
+                      {(liveValidationError || yamlError)?.snippet && (
+                        <div className="bg-white rounded border border-red-200 p-2 mb-2">
+                          <pre className="text-xs font-mono text-gray-800 whitespace-pre-wrap">
+                            {(liveValidationError || yamlError)?.snippet}
+                          </pre>
+                        </div>
+                      )}
+
+                      {(liveValidationError || yamlError)?.suggestion && (
+                        <div className="bg-yellow-50 border border-yellow-200 rounded p-2 mb-3">
+                          <div className="text-xs font-semibold text-yellow-800 mb-1">
+                            💡 修復提案:
+                          </div>
+                          <div className="text-xs text-yellow-700">
+                            {(liveValidationError || yamlError)?.suggestion}
+                          </div>
+                        </div>
+                      )}
+
+                      <button
+                        onClick={applyAutoFix}
+                        className="px-3 py-1 text-xs bg-yellow-600 text-white rounded hover:bg-yellow-700"
+                      >
+                        自動修復を試す
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {!liveValidationError && !yamlError && (
+              <div className="px-6 pt-4">
+                <div className="bg-green-50 border border-green-200 rounded-lg p-3 flex items-center">
+                  <svg
+                    className="w-5 h-5 text-green-500 mr-2"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <span className="text-sm text-green-700 font-medium">
+                    YAMLは正常です
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* エディタエリア */}
+            <div className="flex-1 overflow-auto p-6">
+              <div className="border border-gray-300 rounded-lg overflow-hidden">
+                <textarea
+                  value={editingYaml}
+                  onChange={(e) => handleYamlEdit(e.target.value)}
+                  className="w-full h-96 p-4 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="YAMLコンテンツを入力..."
+                  spellCheck={false}
+                />
+              </div>
+              <div className="text-xs text-gray-500 mt-2">
+                {editingYaml.split('\n').length} 行 | {editingYaml.length} 文字
+              </div>
+            </div>
+
+            {/* モーダルフッター */}
+            <div className="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50">
+              <button
+                onClick={() => setShowYamlEditor(false)}
+                className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100"
+              >
+                キャンセル
+              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    const blob = new Blob([editingYaml], { type: 'text/yaml' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${templateName || 'template'}.yaml`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                  }}
+                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100"
+                >
+                  ダウンロード
+                </button>
+                <button
+                  onClick={saveYamlEdit}
+                  disabled={!!liveValidationError}
+                  className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  保存
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

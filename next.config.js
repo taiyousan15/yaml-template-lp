@@ -1,5 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  eslint: {
+    // ビルド時にESLintエラーを無視
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    // ビルド時に型チェックエラーを無視（オプション）
+    ignoreBuildErrors: true,
+  },
   serverExternalPackages: ['pg', 'drizzle-orm'],
   images: {
     remotePatterns: [

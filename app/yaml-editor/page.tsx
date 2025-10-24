@@ -17,7 +17,25 @@ export default function YAMLEditorPage() {
   const [editedValues, setEditedValues] = useState<Record<string, any>>({});
   const [previewHTML, setPreviewHTML] = useState('');
   const [parseError, setParseError] = useState('');
+  const [uploadedFileName, setUploadedFileName] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  // ファイルアップロード処理
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setUploadedFileName(file.name);
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const content = e.target?.result as string;
+      setYamlText(content);
+      parseYAML(content);
+    };
+    reader.readAsText(file);
+  };
 
   // サンプルYAMLテンプレート
   const sampleYAML = `# LPテンプレート設定
@@ -279,19 +297,38 @@ footer:
               </Link>
               <h1 className="text-2xl font-bold text-gray-900">YAMLテンプレートエディタ</h1>
             </div>
-            <button
-              onClick={() => {
-                const blob = new Blob([previewHTML], { type: 'text/html' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'landing-page.html';
-                a.click();
-              }}
-              className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
-            >
-              HTMLダウンロード
-            </button>
+            <div className="flex space-x-3">
+              <button
+                onClick={() => {
+                  const updatedData = getUpdatedData();
+                  if (updatedData) {
+                    const yamlString = yaml.dump(updatedData);
+                    const blob = new Blob([yamlString], { type: 'text/yaml' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'template.yaml';
+                    a.click();
+                  }
+                }}
+                className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+              >
+                📥 YAMLダウンロード
+              </button>
+              <button
+                onClick={() => {
+                  const blob = new Blob([previewHTML], { type: 'text/html' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = 'landing-page.html';
+                  a.click();
+                }}
+                className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+              >
+                📄 HTMLダウンロード
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -301,7 +338,28 @@ footer:
           {/* YAML入力エリア */}
           <div className="lg:col-span-1 space-y-4">
             <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold mb-4">YAMLテンプレート</h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold">YAMLテンプレート</h2>
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 flex items-center space-x-2"
+                >
+                  <span>📁</span>
+                  <span>ファイルを選択</span>
+                </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".yaml,.yml"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+              </div>
+              {uploadedFileName && (
+                <div className="mb-2 text-sm text-green-600">
+                  ✅ アップロード済み: {uploadedFileName}
+                </div>
+              )}
               <textarea
                 value={yamlText}
                 onChange={(e) => {
