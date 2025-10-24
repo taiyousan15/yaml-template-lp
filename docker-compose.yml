@@ -11,7 +11,7 @@ services:
       database:
         condition: service_healthy
     ports:
-      - "3001:3000"
+      - "9000:3000"
     environment:
       - NODE_ENV=production
       - PORT=3000
