@@ -163,6 +163,27 @@ export default function WizardFromImagePage() {
         throw new Error('テンプレート保存に失敗しました')
       }
 
+      const result = await response.json()
+
+      // テストモード: ローカルストレージに保存
+      const savedTemplates = JSON.parse(localStorage.getItem('savedTemplates') || '[]')
+      const newTemplate = {
+        id: templateId,
+        name: `画像から作成 ${new Date().toLocaleDateString('ja-JP')}`,
+        description: `${blocks.length}個のブロックを含むテンプレート`,
+        tags: ['自動生成', '画像から作成'],
+        priceCents: 0,
+        thumbnail: uploadedImage || '',
+        requiredVars: blocks.map(b => b.id),
+        author: 'あなた',
+        usageCount: 0,
+        blocks: blocks,
+        diffMetrics: result.diffMetrics,
+        createdAt: new Date().toISOString(),
+      }
+      savedTemplates.push(newTemplate)
+      localStorage.setItem('savedTemplates', JSON.stringify(savedTemplates))
+
       alert('テンプレートを保存しました！')
       // テンプレートカタログへ遷移
       window.location.href = '/templates'

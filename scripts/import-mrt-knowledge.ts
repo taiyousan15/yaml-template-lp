@@ -1,16 +1,16 @@
 import { db } from '../lib/db'
 import { lpKnowledge, promptTemplates } from '../drizzle/schema'
-import { TOMY_STYLE_KNOWLEDGE } from '../lib/tomy-style-agent'
+import { MrT_STYLE_KNOWLEDGE } from '../lib/mrt-style-agent'
 
 /**
- * TOMYスタイル分析結果をナレッジベースにインポート
+ * MrTスタイル分析結果をナレッジベースにインポート
  *
  * 実行方法:
- * npx tsx scripts/import-tomy-knowledge.ts
+ * npx tsx scripts/import-mrt-knowledge.ts
  */
 
-async function importTOMYKnowledge() {
-  console.log('🚀 TOMYスタイルナレッジのインポート開始...')
+async function importMrTKnowledge() {
+  console.log('🚀 MrTスタイルナレッジのインポート開始...')
 
   try {
     // 1. ヘッドラインパターンをインポート
@@ -28,13 +28,13 @@ async function importTOMYKnowledge() {
 - 数値は必ず端数まで記載（信憑性UP）
 - 期間を明示（即効性の証明）
 - 人物属性を具体化（自分事化）`,
-        examples: TOMY_STYLE_KNOWLEDGE.HEADLINE_PATTERNS.NUMERICAL_IMPACT.examples,
+        examples: MrT_STYLE_KNOWLEDGE.HEADLINE_PATTERNS.NUMERICAL_IMPACT.examples,
         metrics: {
           estimatedCVR: 4.5,
-          confidence: TOMY_STYLE_KNOWLEDGE.HEADLINE_PATTERNS.NUMERICAL_IMPACT.confidenceScore,
+          confidence: MrT_STYLE_KNOWLEDGE.HEADLINE_PATTERNS.NUMERICAL_IMPACT.confidenceScore,
         },
         tags: ['headline', 'numerical', 'urgency', 'specificity'],
-        confidence: TOMY_STYLE_KNOWLEDGE.HEADLINE_PATTERNS.NUMERICAL_IMPACT.confidenceScore,
+        confidence: MrT_STYLE_KNOWLEDGE.HEADLINE_PATTERNS.NUMERICAL_IMPACT.confidenceScore,
       },
       {
         category: 'copywriting' as const,
@@ -47,32 +47,32 @@ async function importTOMYKnowledge() {
 - BeforeとAfterは具体的な数値で
 - 倍率を明示して衝撃を増幅
 - 極端な対比ほど効果的（10倍以上推奨）`,
-        examples: TOMY_STYLE_KNOWLEDGE.HEADLINE_PATTERNS.DRAMATIC_CONTRAST.examples,
+        examples: MrT_STYLE_KNOWLEDGE.HEADLINE_PATTERNS.DRAMATIC_CONTRAST.examples,
         metrics: {
           estimatedCVR: 4.2,
-          confidence: TOMY_STYLE_KNOWLEDGE.HEADLINE_PATTERNS.DRAMATIC_CONTRAST.confidenceScore,
+          confidence: MrT_STYLE_KNOWLEDGE.HEADLINE_PATTERNS.DRAMATIC_CONTRAST.confidenceScore,
         },
         tags: ['contrast', 'before-after', 'transformation'],
-        confidence: TOMY_STYLE_KNOWLEDGE.HEADLINE_PATTERNS.DRAMATIC_CONTRAST.confidenceScore,
+        confidence: MrT_STYLE_KNOWLEDGE.HEADLINE_PATTERNS.DRAMATIC_CONTRAST.confidenceScore,
       },
       {
         category: 'cta' as const,
         knowledgeType: 'best_practice' as const,
-        title: '緊急性×希少性の同時訴求（TOMYスタイル出現率100%）',
+        title: '緊急性×希少性の同時訴求（MrTスタイル出現率100%）',
         description: `「[時間的制限]×[数量的制限]＋[失うものの明示]」で即断を促す。
 例: 「48時間限定・先着30名のみ（逃すと6ヶ月待ち）」
 
 ルール:
 - 時間と数量の両方を制限
 - 失うもの（機会損失）を明示
-- TOMYスタイルでは100%出現（一般LPは62%）`,
-        examples: TOMY_STYLE_KNOWLEDGE.HEADLINE_PATTERNS.URGENCY_SCARCITY.examples,
+- MrTスタイルでは100%出現（一般LPは62%）`,
+        examples: MrT_STYLE_KNOWLEDGE.HEADLINE_PATTERNS.URGENCY_SCARCITY.examples,
         metrics: {
           estimatedCVR: 5.1,
-          confidence: TOMY_STYLE_KNOWLEDGE.HEADLINE_PATTERNS.URGENCY_SCARCITY.confidenceScore,
+          confidence: MrT_STYLE_KNOWLEDGE.HEADLINE_PATTERNS.URGENCY_SCARCITY.confidenceScore,
         },
         tags: ['urgency', 'scarcity', 'cta', 'fomo'],
-        confidence: TOMY_STYLE_KNOWLEDGE.HEADLINE_PATTERNS.URGENCY_SCARCITY.confidenceScore,
+        confidence: MrT_STYLE_KNOWLEDGE.HEADLINE_PATTERNS.URGENCY_SCARCITY.confidenceScore,
       },
     ]
 
@@ -96,13 +96,13 @@ Bad: 「100万円達成」「約50%の成約率」「売上が5倍に」
 Good: 「89.4万円達成」「成約率46%」「売上419.8%成長（4.2倍）」
 
 端数があると「作り話でない」と感じられる心理効果。`,
-        examples: TOMY_STYLE_KNOWLEDGE.BEST_PRACTICES.DECIMAL_PRECISION.good,
+        examples: MrT_STYLE_KNOWLEDGE.BEST_PRACTICES.DECIMAL_PRECISION.good,
         metrics: {
           estimatedCVR: 4.8,
-          confidence: TOMY_STYLE_KNOWLEDGE.BEST_PRACTICES.DECIMAL_PRECISION.confidenceScore,
+          confidence: MrT_STYLE_KNOWLEDGE.BEST_PRACTICES.DECIMAL_PRECISION.confidenceScore,
         },
         tags: ['numerical', 'credibility', 'specificity'],
-        confidence: TOMY_STYLE_KNOWLEDGE.BEST_PRACTICES.DECIMAL_PRECISION.confidenceScore,
+        confidence: MrT_STYLE_KNOWLEDGE.BEST_PRACTICES.DECIMAL_PRECISION.confidenceScore,
       },
       {
         category: 'copywriting' as const,
@@ -114,13 +114,13 @@ Bad: 「効率化しました」「時短できます」
 Good: 「10時間→5分（120倍の効率化）」「2年→60分（17,520倍）」
 
 倍率を計算して明示することで変化の大きさを可視化。`,
-        examples: TOMY_STYLE_KNOWLEDGE.BEST_PRACTICES.TIME_MULTIPLIER.good,
+        examples: MrT_STYLE_KNOWLEDGE.BEST_PRACTICES.TIME_MULTIPLIER.good,
         metrics: {
           estimatedCVR: 4.6,
-          confidence: TOMY_STYLE_KNOWLEDGE.BEST_PRACTICES.TIME_MULTIPLIER.confidenceScore,
+          confidence: MrT_STYLE_KNOWLEDGE.BEST_PRACTICES.TIME_MULTIPLIER.confidenceScore,
         },
         tags: ['time-efficiency', 'contrast', 'quantification'],
-        confidence: TOMY_STYLE_KNOWLEDGE.BEST_PRACTICES.TIME_MULTIPLIER.confidenceScore,
+        confidence: MrT_STYLE_KNOWLEDGE.BEST_PRACTICES.TIME_MULTIPLIER.confidenceScore,
       },
       {
         category: 'copywriting' as const,
@@ -132,13 +132,13 @@ Bad: 「売上が伸びない」「もう限界です」
 Good: 「首吊って死んでいたかもしれません」「水道が止まる極限状態」「借金120万円」
 
 抽象的な表現ではなく、具体的な状況・数値で感情を揺さぶる。`,
-        examples: TOMY_STYLE_KNOWLEDGE.BEST_PRACTICES.EXTREME_EMOTION.good,
+        examples: MrT_STYLE_KNOWLEDGE.BEST_PRACTICES.EXTREME_EMOTION.good,
         metrics: {
           estimatedCVR: 4.7,
-          confidence: TOMY_STYLE_KNOWLEDGE.BEST_PRACTICES.EXTREME_EMOTION.confidenceScore,
+          confidence: MrT_STYLE_KNOWLEDGE.BEST_PRACTICES.EXTREME_EMOTION.confidenceScore,
         },
         tags: ['emotion', 'storytelling', 'problem'],
-        confidence: TOMY_STYLE_KNOWLEDGE.BEST_PRACTICES.EXTREME_EMOTION.confidenceScore,
+        confidence: MrT_STYLE_KNOWLEDGE.BEST_PRACTICES.EXTREME_EMOTION.confidenceScore,
       },
       {
         category: 'layout' as const,
@@ -155,8 +155,8 @@ Good: 「首吊って死んでいたかもしれません」「水道が止ま�
 7. CTA（複数箇所）: 行動喚起
 8. 緊急性・希少性（80-100%）: 即断促進
 
-注: 緊急性・希少性はTOMYスタイル100%、一般LP62%`,
-        examples: TOMY_STYLE_KNOWLEDGE.STRUCTURE_ELEMENTS.elements.map((e) => e.name),
+注: 緊急性・希少性はMrTスタイル100%、一般LP62%`,
+        examples: MrT_STYLE_KNOWLEDGE.STRUCTURE_ELEMENTS.elements.map((e) => e.name),
         metrics: {
           estimatedCVR: 4.3,
           confidence: 92,
@@ -198,8 +198,8 @@ Good: 「首吊って死んでいたかもしれません」「水道が止ま�
 【自動化系】
 自動化、仕組み化、AI、ファネル、テンプレート`,
       examples: [
-        ...TOMY_STYLE_KNOWLEDGE.KILLER_WORDS.NUMERICAL.top,
-        ...TOMY_STYLE_KNOWLEDGE.KILLER_WORDS.AUTOMATION.keywords,
+        ...MrT_STYLE_KNOWLEDGE.KILLER_WORDS.NUMERICAL.top,
+        ...MrT_STYLE_KNOWLEDGE.KILLER_WORDS.AUTOMATION.keywords,
       ],
       metrics: {
         estimatedCVR: 4.4,
@@ -218,9 +218,9 @@ Good: 「首吊って死んでいたかもしれません」「水道が止ま�
 
     const promptTemplatesSeed = [
       {
-        name: 'TOMYスタイル ヒーローセクション生成',
+        name: 'MrTスタイル ヒーローセクション生成',
         purpose: 'hero' as const,
-        promptText: `TOMYスタイル黄金律に従ってヒーローセクションを生成してください。
+        promptText: `MrTスタイル黄金律に従ってヒーローセクションを生成してください。
 
 必須要素:
 1. 数値×時間×結果の3点セット
@@ -239,15 +239,15 @@ Good: 「首吊って死んでいたかもしれません」「水道が止ま�
         variables: { vars: ['product_name', 'main_benefit', 'target_audience'] },
         temperature: 80,
         examples: {
-          items: TOMY_STYLE_KNOWLEDGE.HEADLINE_PATTERNS.NUMERICAL_IMPACT.examples,
+          items: MrT_STYLE_KNOWLEDGE.HEADLINE_PATTERNS.NUMERICAL_IMPACT.examples,
         },
         version: 1,
         isActive: true,
       },
       {
-        name: 'TOMYスタイル CTA生成（緊急性×希少性）',
+        name: 'MrTスタイル CTA生成（緊急性×希少性）',
         purpose: 'cta' as const,
-        promptText: `TOMYスタイル黄金律に従ってCTAを生成してください。
+        promptText: `MrTスタイル黄金律に従ってCTAを生成してください。
 
 必須要素:
 1. 時間的制限（48時間、本日23:59まで）
@@ -264,7 +264,7 @@ Good: 「首吊って死んでいたかもしれません」「水道が止ま�
         knowledgeIds: [],
         variables: { vars: ['cta_text', 'time_limit', 'quantity_limit'] },
         temperature: 70,
-        examples: { items: TOMY_STYLE_KNOWLEDGE.HEADLINE_PATTERNS.URGENCY_SCARCITY.examples },
+        examples: { items: MrT_STYLE_KNOWLEDGE.HEADLINE_PATTERNS.URGENCY_SCARCITY.examples },
         version: 1,
         isActive: true,
       },
@@ -276,7 +276,7 @@ Good: 「首吊って死んでいたかもしれません」「水道が止ま�
 
     console.log(`✅ プロンプトテンプレート ${promptTemplatesSeed.length}件をインポート`)
 
-    console.log('\n🎉 TOMYスタイルナレッジのインポート完了！')
+    console.log('\n🎉 MrTスタイルナレッジのインポート完了！')
     console.log(`
 📊 インポート結果:
 - ヘッドラインパターン: ${headlinePatterns.length}件
@@ -293,7 +293,7 @@ Good: 「首吊って死んでいたかもしれません」「水道が止ま�
 }
 
 // 実行
-importTOMYKnowledge()
+importMrTKnowledge()
   .then(() => {
     console.log('✅ 処理完了')
     process.exit(0)

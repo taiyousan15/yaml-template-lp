@@ -64,8 +64,39 @@ export async function POST(req: NextRequest) {
     // TODO: Python OCR/レイアウト検出処理を呼び出し
     // テストモードではモックデータを返す
     if (testMode) {
+      const mockYaml = `# LPテンプレート設定
+meta:
+  title: "サンプルLP"
+  description: "画像から自動生成されたLPテンプレート"
+
+hero:
+  headline: "サンプル見出し"
+  subheadline: "サンプル説明文です。ここに詳細な説明が入ります。"
+  cta_text: "今すぐ申し込む"
+  background_color: "#1a1a2e"
+
+features:
+  - title: "特徴1"
+    description: "特徴の詳細説明"
+    icon: "⭐"
+  - title: "特徴2"
+    description: "特徴の詳細説明"
+    icon: "💎"
+
+cta:
+  button_text: "今すぐ申し込む"
+  button_color: "#F59E0B"
+  form_placeholder: "メールアドレスを入力"
+
+footer:
+  company: "会社名"
+  subtitle: "サービス名"
+  disclaimer: "注意事項やディスクレーマーをここに記載"
+`;
+
       return NextResponse.json({
         templateId: 'test-template-id',
+        yaml: mockYaml,
         blocks: [
           {
             id: 'block-1',
@@ -104,7 +135,6 @@ export async function POST(req: NextRequest) {
           colorDelta: 0.05,
           layoutDelta: 0.03,
         },
-        yamlUrl: 'https://example.com/test.yaml',
         mappingReportUrl: 'https://example.com/test-mapping.json',
       });
     }

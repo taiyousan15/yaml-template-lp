@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 
-type GenerationMode = 'auto' | 'tomy_only' | 'knowledge_only'
+type GenerationMode = 'auto' | 'mrt_only' | 'knowledge_only'
 
 export default function GeneratePage() {
   const [formData, setFormData] = useState({
@@ -83,7 +83,7 @@ export default function GeneratePage() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">統合LP生成</h1>
           <p className="mt-2 text-gray-600">
-            TOMYスタイル黄金律とナレッジベースを自動統合して最高品質のLPを生成
+            MrTスタイル黄金律とナレッジベースを自動統合して最高品質のLPを生成
           </p>
         </div>
 
@@ -234,7 +234,7 @@ export default function GeneratePage() {
                         🔥 自動統合モード（推奨）
                       </div>
                       <div className="text-sm text-gray-700 mt-1">
-                        TOMYスタイル + ナレッジベース + YAML分析を自動統合
+                        MrTスタイル + ナレッジベース + YAML分析を自動統合
                       </div>
                       <div className="text-xs text-indigo-600 mt-1">
                         推定品質スコア: 95点
@@ -246,17 +246,17 @@ export default function GeneratePage() {
                     <input
                       type="radio"
                       name="mode"
-                      value="tomy_only"
-                      checked={formData.mode === 'tomy_only'}
+                      value="mrt_only"
+                      checked={formData.mode === 'mrt_only'}
                       onChange={(e) =>
                         setFormData({ ...formData, mode: e.target.value as GenerationMode })
                       }
                       className="mt-1 mr-3"
                     />
                     <div>
-                      <div className="font-semibold">TOMYスタイル専用</div>
+                      <div className="font-semibold">MrTスタイル専用</div>
                       <div className="text-sm text-gray-600 mt-1">
-                        TOMYスタイル黄金律のみを適用
+                        MrTスタイル黄金律のみを適用
                       </div>
                       <div className="text-xs text-gray-500 mt-1">
                         推定品質スコア: 90点
@@ -316,7 +316,7 @@ export default function GeneratePage() {
                   </div>
                   <div className="flex items-center">
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-indigo-600 mr-3"></div>
-                    <span className="text-sm">TOMYスタイル適用</span>
+                    <span className="text-sm">MrTスタイル適用</span>
                   </div>
                 </div>
               </div>
@@ -338,9 +338,9 @@ export default function GeneratePage() {
                 <div className="space-y-4">
                   {/* スコア */}
                   <div>
-                    <div className="text-sm text-gray-600">TOMYスコア</div>
+                    <div className="text-sm text-gray-600">MrTスコア</div>
                     <div className="text-3xl font-bold text-indigo-600">
-                      {result.metadata.tomy_score}点
+                      {result.metadata.mrt_score}点
                     </div>
                   </div>
 

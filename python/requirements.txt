@@ -5,3 +5,12 @@ pytesseract==0.3.13
 scikit-image==0.24.0
 numpy==2.0.2
 boto3==1.35.32
+
+# DeepSeek-OCR dependencies
+torch==2.6.0
+transformers==4.46.3
+tokenizers==0.20.3
+einops
+addict
+easydict
+# flash-attn==2.7.3  # Install separately with: pip install flash-attn==2.7.3 --no-build-isolation

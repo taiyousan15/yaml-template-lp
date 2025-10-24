@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 interface Template {
@@ -19,13 +19,24 @@ export default function TemplatesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
-  const [templates] = useState<Template[]>([
+  const defaultTemplates: Template[] = [
+    {
+      id: 'depre-lp-sample',
+      name: 'でぷれLP（LPデザイン分析agent生成）',
+      description: 'LPデザイン分析agentによる11領域フル分析から生成された高品質LPテンプレート。濃い紫×ライムグリーンの配色が特徴的で、プログラム・スクール・サービス訴求に最適',
+      tags: ['LP', 'プログラム', '11領域分析', 'AI生成'],
+      priceCents: 0,
+      thumbnail: '/templates/depre-lp-thumb.png',
+      requiredVars: ['hero_title', 'features', 'testimonials', 'pricing', 'faq'],
+      author: 'LPデザイン分析agent',
+      usageCount: 0,
+    },
     {
       id: '1',
       name: '在宅ワーク訴求バナー',
       description: '事務職向けの在宅ワーク訴求に最適なテンプレート',
       tags: ['バナー', '在宅ワーク', '女性向け'],
-      priceCents: 0, // 無料
+      priceCents: 0,
       thumbnail: '/templates/template-1.png',
       requiredVars: ['question', 'headline', 'subheadline', 'offer'],
       author: 'System',
@@ -53,7 +64,16 @@ export default function TemplatesPage() {
       author: 'Pro User',
       usageCount: 203,
     },
-  ]);
+  ];
+
+  const [templates, setTemplates] = useState<Template[]>(defaultTemplates);
+
+  // ローカルストレージから保存したテンプレートを読み込む
+  useEffect(() => {
+    const savedTemplates = JSON.parse(localStorage.getItem('savedTemplates') || '[]');
+    setTemplates([...savedTemplates, ...defaultTemplates]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const allTags = Array.from(new Set(templates.flatMap((t) => t.tags)));
 
@@ -170,10 +190,18 @@ export default function TemplatesPage() {
               className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition group"
             >
               {/* サムネイル */}
-              <div className="relative h-48 bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
-                <div className="text-gray-400 text-sm">
-                  {template.name}のプレビュー
-                </div>
+              <div className="relative h-48 bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center overflow-hidden">
+                {template.thumbnail && template.thumbnail.startsWith('data:') ? (
+                  <img
+                    src={template.thumbnail}
+                    alt={template.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="text-gray-400 text-sm">
+                    {template.name}のプレビュー
+                  </div>
+                )}
                 {template.priceCents === 0 && (
                   <div className="absolute top-2 left-2 bg-green-500 text-white px-2 py-1 rounded text-xs font-bold">
                     無料
@@ -238,16 +266,10 @@ export default function TemplatesPage() {
                 {/* アクション */}
                 <div className="flex gap-2">
                   <Link
-                    href={`/templates/${template.id}`}
-                    className="flex-1 text-center px-4 py-2 border border-indigo-600 text-indigo-600 rounded-lg hover:bg-indigo-50 transition text-sm font-medium"
-                  >
-                    詳細
-                  </Link>
-                  <Link
-                    href={`/editor/new?templateId=${template.id}`}
+                    href={`/editor/${template.id}`}
                     className="flex-1 text-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition text-sm font-medium"
                   >
-                    使用する
+                    このテンプレートを使う
                   </Link>
                 </div>
               </div>

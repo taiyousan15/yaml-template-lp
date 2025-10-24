@@ -5,11 +5,25 @@ export default function Home() {
         <h1 className="text-5xl font-bold text-gray-900 mb-6">
           YAML Template LP System
         </h1>
-        <p className="text-xl text-gray-700 mb-12">
+        <p className="text-xl text-gray-700 mb-8">
           全自動LP制作テンプレートシステム
           <br />
-          スクリーンショットからYAMLテンプレート化し、文章差し替えだけでLPを量産
+          MrTスタイル黄金律とナレッジ統合で95点以上の最高品質LP生成
         </p>
+
+        <div className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white p-6 rounded-lg mb-12 shadow-xl">
+          <h2 className="text-2xl font-bold mb-2">🔥 NEW: 統合LP生成システム</h2>
+          <p className="text-indigo-100 mb-4">
+            13LP徹底分析から抽出したMrTスタイル黄金律を100%適用！<br />
+            マルチエージェントシステムで自動的にナレッジを蓄積・統合
+          </p>
+          <a
+            href="/generate"
+            className="inline-block px-6 py-3 bg-white text-indigo-600 rounded-lg font-bold hover:bg-indigo-50 transition"
+          >
+            今すぐ無料で試す →
+          </a>
+        </div>
 
         <div className="grid md:grid-cols-3 gap-8 mb-12">
           <div className="bg-white p-6 rounded-lg shadow-md">

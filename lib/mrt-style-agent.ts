@@ -6,7 +6,7 @@ const anthropic = new Anthropic({
 })
 
 /**
- * TOMYスタイル分析結果から抽出した「売れるLP」の黄金パターン
+ * MrTスタイル分析結果から抽出した「売れるLP」の黄金パターン
  *
  * 分析ソース: 13個のLP横断分析
  * - 01_全LP共通パターン分析.md
@@ -15,10 +15,10 @@ const anthropic = new Anthropic({
  */
 
 // ========================================
-// TOMYスタイル コアナレッジ
+// MrTスタイル コアナレッジ
 // ========================================
 
-export const TOMY_STYLE_KNOWLEDGE = {
+export const MrT_STYLE_KNOWLEDGE = {
   // ヘッドライン構築の黄金律
   HEADLINE_PATTERNS: {
     // パターン1: 数値×時間×結果の3点セット
@@ -64,7 +64,7 @@ export const TOMY_STYLE_KNOWLEDGE = {
       rules: [
         '時間と数量の両方を制限',
         '失うもの（機会損失）を明示',
-        'TOMYスタイルの出現率: 100%（一般LP: 62%）',
+        'MrTスタイルの出現率: 100%（一般LP: 62%）',
       ],
       confidenceScore: 98,
     },
@@ -167,7 +167,7 @@ export const TOMY_STYLE_KNOWLEDGE = {
       {
         name: '緊急性・希少性',
         position: 'クロージング（80-100%）',
-        occurrence: 'TOMY: 100%, 一般LP: 62%',
+        occurrence: 'MrT: 100%, 一般LP: 62%',
         purpose: '即断促進',
       },
     ],
@@ -214,10 +214,10 @@ export const TOMY_STYLE_KNOWLEDGE = {
 }
 
 // ========================================
-// TOMYスタイル強化エージェント
+// MrTスタイル強化エージェント
 // ========================================
 
-export const TOMYStylePromptSchema = z.object({
+export const MrTStylePromptSchema = z.object({
   headline: z.string(),
   subheadline: z.string().optional(),
   sections: z.array(
@@ -229,21 +229,21 @@ export const TOMYStylePromptSchema = z.object({
     })
   ),
   metadata: z.object({
-    tomy_score: z.number().min(0).max(100), // TOMYスタイル適用度
+    mrt_score: z.number().min(0).max(100), // MrTスタイル適用度
     killer_words_count: z.number(),
     contrast_multiplier: z.number().optional(),
   }),
 })
 
-export type TOMYStylePrompt = z.infer<typeof TOMYStylePromptSchema>
+export type MrTStylePrompt = z.infer<typeof MrTStylePromptSchema>
 
 /**
- * TOMYスタイル エージェント
+ * MrTスタイル エージェント
  *
  * 13LP分析から抽出した黄金パターンを適用してLP文案を生成
  * 温度: 0.7-0.9（創造性と再現性のバランス）
  */
-export async function tomyStyleAgent(options: {
+export async function mrtStyleAgent(options: {
   productName: string
   targetAudience: string
   mainBenefit: string
@@ -251,10 +251,10 @@ export async function tomyStyleAgent(options: {
   afterState: string
   credibility: string
   temperature?: number
-}): Promise<TOMYStylePrompt> {
+}): Promise<MrTStylePrompt> {
   const { productName, targetAudience, mainBenefit, beforeState, afterState, credibility, temperature = 0.8 } = options
 
-  const prompt = `あなたは13個のトップ成約率LPを分析した「TOMYスタイル」の専門家です。以下のナレッジを100%活用してLP文案を生成してください。
+  const prompt = `あなたは13個のトップ成約率LPを分析した「MrTスタイル」の専門家です。以下のナレッジを100%活用してLP文案を生成してください。
 
 # 製品情報
 - 製品名: ${productName}
@@ -264,7 +264,7 @@ export async function tomyStyleAgent(options: {
 - After状態: ${afterState}
 - 信頼性要素: ${credibility}
 
-# 必須適用パターン（TOMYスタイル黄金律）
+# 必須適用パターン（MrTスタイル黄金律）
 
 ## 1. ヘッドライン構築の3点セット
 テンプレート: "[期間]で[端数付き数値]を達成した[具体的な人物属性]の[感情ワード]"
@@ -284,7 +284,7 @@ export async function tomyStyleAgent(options: {
 - 倍率を明示（10倍以上推奨）
 - 極端な対比ほど効果的
 
-## 3. 緊急性×希少性の同時訴求（TOMYスタイル出現率100%）
+## 3. 緊急性×希少性の同時訴求（MrTスタイル出現率100%）
 テンプレート: "[時間的制限]×[数量的制限]＋[失うものの明示]"
 例: "48時間限定・先着30名のみ（逃すと6ヶ月待ち）"
 
@@ -324,13 +324,13 @@ export async function tomyStyleAgent(options: {
     ... （8セクション全て）
   ],
   "metadata": {
-    "tomy_score": 95,
+    "mrt_score": 95,
     "killer_words_count": 12,
     "contrast_multiplier": 120
   }
 }
 
-**重要**: 全てのベストプラクティスを適用し、tomy_scoreが90点以上になるように作成してください。`
+**重要**: 全てのベストプラクティスを適用し、mrt_scoreが90点以上になるように作成してください。`
 
   const response = await anthropic.messages.create({
     model: 'claude-3-5-sonnet-20241022',
@@ -346,24 +346,24 @@ export async function tomyStyleAgent(options: {
 
   const content = response.content[0]
   if (content.type !== 'text') {
-    throw new Error('TOMYStyleAgent failed to generate')
+    throw new Error('MrTStyleAgent failed to generate')
   }
 
   try {
     const parsed = JSON.parse(content.text)
-    return TOMYStylePromptSchema.parse(parsed)
+    return MrTStylePromptSchema.parse(parsed)
   } catch (error) {
-    console.error('TOMYStyleAgent JSON parse error:', error)
-    throw new Error('Failed to parse TOMYStyle output')
+    console.error('MrTStyleAgent JSON parse error:', error)
+    throw new Error('Failed to parse MrTStyle output')
   }
 }
 
 /**
- * TOMYスタイル スコアリング
+ * MrTスタイル スコアリング
  *
- * 生成されたLP文案がどれだけTOMYスタイルに準拠しているかを評価
+ * 生成されたLP文案がどれだけMrTスタイルに準拠しているかを評価
  */
-export function scoreTOMYStyle(lpContent: string): {
+export function scoreMrTStyle(lpContent: string): {
   score: number
   breakdown: {
     numerical_precision: number // 端数の使用

@@ -1,0 +1,518 @@
+# でぷれLP - YAMLテンプレート
+# LPデザイン分析agent による11領域フル分析結果
+
+meta:
+  title: "でぷれLP - プログラム紹介"
+  description: "AIによる詳細LP分析から生成されたYAMLテンプレート"
+  generated_by: "LPデザイン分析agent"
+  analysis_domains: 11
+  template_version: "1.0"
+
+# ========================================
+# デザイントークン（Design Tokens）
+# ========================================
+design_tokens:
+  colors:
+    primary: "#4A3B5C"        # 濃い紫（メインカラー）
+    secondary: "#7FE86C"      # ライムグリーン（CTAカラー）
+    accent: "#FFD700"         # ゴールド（アクセント）
+    text_primary: "#FFFFFF"   # 白（プライマリテキスト）
+    text_secondary: "#333333" # 濃いグレー（セカンダリテキスト）
+    background: "#F5F5F7"     # 薄いグレー（背景）
+    card_bg: "#FFFFFF"        # 白（カード背景）
+
+  typography:
+    font_family_primary: "'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif"
+    font_family_heading: "'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif"
+
+    # フォントサイズ
+    font_size_xs: "12px"
+    font_size_sm: "14px"
+    font_size_base: "16px"
+    font_size_lg: "18px"
+    font_size_xl: "24px"
+    font_size_2xl: "32px"
+    font_size_3xl: "40px"
+    font_size_4xl: "48px"
+
+    # 行間
+    line_height_tight: 1.2
+    line_height_normal: 1.6
+    line_height_relaxed: 1.8
+
+    # フォントウェイト
+    font_weight_normal: 400
+    font_weight_medium: 500
+    font_weight_bold: 700
+
+  spacing:
+    xs: "8px"
+    sm: "16px"
+    md: "24px"
+    lg: "32px"
+    xl: "48px"
+    xxl: "64px"
+    xxxl: "80px"
+
+  border_radius:
+    sm: "4px"
+    md: "8px"
+    lg: "16px"
+    xl: "24px"
+    full: "9999px"
+
+  shadows:
+    sm: "0 2px 4px rgba(0, 0, 0, 0.1)"
+    md: "0 4px 8px rgba(0, 0, 0, 0.12)"
+    lg: "0 8px 16px rgba(0, 0, 0, 0.15)"
+    xl: "0 12px 24px rgba(0, 0, 0, 0.18)"
+
+# ========================================
+# Hero セクション
+# ========================================
+hero:
+  background_color: "#4A3B5C"
+  background_image: null
+  background_overlay: "rgba(74, 59, 92, 0.9)"
+
+  headline:
+    text: "あなたの人生を変える\n革新的プログラム"
+    font_size: "48px"
+    font_weight: 700
+    color: "#FFFFFF"
+    line_height: 1.3
+    text_align: "center"
+    margin_bottom: "24px"
+
+  subheadline:
+    text: "3ヶ月で理想の自分を実現する\n完全サポートプログラム"
+    font_size: "20px"
+    font_weight: 400
+    color: "#FFFFFF"
+    line_height: 1.8
+    text_align: "center"
+    opacity: 0.95
+    margin_bottom: "40px"
+
+  lead_text:
+    text: "初心者でも安心！LINEで気軽に相談できる"
+    font_size: "16px"
+    color: "#FFD700"
+    text_align: "center"
+    margin_bottom: "32px"
+
+  cta_button:
+    text: "今すぐLINEで無料相談"
+    background_color: "#7FE86C"
+    text_color: "#FFFFFF"
+    font_size: "18px"
+    font_weight: 700
+    padding: "20px 48px"
+    border_radius: "9999px"
+    box_shadow: "0 8px 16px rgba(127, 232, 108, 0.3)"
+    hover_transform: "translateY(-2px)"
+    hover_shadow: "0 12px 24px rgba(127, 232, 108, 0.4)"
+    icon: "📱"
+    width: "100%"
+    max_width: "400px"
+
+  image:
+    src: "/images/hero-person.jpg"
+    alt: "プログラム講師の写真"
+    width: "300px"
+    height: "300px"
+    border_radius: "50%"
+    border: "4px solid #7FE86C"
+    margin_top: "40px"
+    position: "center"
+
+# ========================================
+# 特徴セクション（Features）
+# ========================================
+features:
+  section_title: "選ばれる3つの理由"
+  section_subtitle: "なぜ多くの方に選ばれているのか"
+  background_color: "#F5F5F7"
+  padding: "80px 20px"
+
+  items:
+    - title: "完全個別サポート"
+      description: "一人ひとりに合わせたカスタマイズされたプログラムで、あなたのペースで進められます"
+      icon: "✨"
+      icon_color: "#7FE86C"
+      icon_size: "48px"
+      card_background: "#4A3B5C"
+      card_text_color: "#FFFFFF"
+      card_padding: "32px"
+      card_border_radius: "16px"
+      card_shadow: "0 8px 16px rgba(0, 0, 0, 0.1)"
+
+    - title: "実績豊富な講師陣"
+      description: "業界経験15年以上のプロフェッショナルが、あなたの成功を全力でサポートします"
+      icon: "🎯"
+      icon_color: "#7FE86C"
+      icon_size: "48px"
+      card_background: "#4A3B5C"
+      card_text_color: "#FFFFFF"
+      card_padding: "32px"
+      card_border_radius: "16px"
+      card_shadow: "0 8px 16px rgba(0, 0, 0, 0.1)"
+
+    - title: "永久サポート保証"
+      description: "プログラム修了後も、LINEで無制限にサポート。安心して学習を続けられます"
+      icon: "💎"
+      icon_color: "#7FE86C"
+      icon_size: "48px"
+      card_background: "#4A3B5C"
+      card_text_color: "#FFFFFF"
+      card_padding: "32px"
+      card_border_radius: "16px"
+      card_shadow: "0 8px 16px rgba(0, 0, 0, 0.1)"
+
+  layout: "grid"
+  grid_columns: 3
+  grid_gap: "32px"
+  mobile_columns: 1
+
+# ========================================
+# プログラム詳細セクション
+# ========================================
+program_details:
+  section_title: "プログラム内容"
+  background_color: "#FFFFFF"
+  padding: "80px 20px"
+
+  items:
+    - step: "STEP 1"
+      title: "基礎コース"
+      duration: "1ヶ月目"
+      description: "まずは基礎からしっかり学習。誰でも理解できるカリキュラムで安心スタート"
+      features:
+        - "基礎知識の習得"
+        - "実践ワークショップ"
+        - "個別カウンセリング"
+      icon: "📚"
+      card_border: "2px solid #4A3B5C"
+
+    - step: "STEP 2"
+      title: "実践コース"
+      duration: "2ヶ月目"
+      description: "学んだ知識を実際に使ってみる。講師のサポート付きで安心して実践"
+      features:
+        - "実践プロジェクト"
+        - "週次フィードバック"
+        - "グループセッション"
+      icon: "💪"
+      card_border: "2px solid #4A3B5C"
+
+    - step: "STEP 3"
+      title: "マスターコース"
+      duration: "3ヶ月目"
+      description: "プロレベルのスキルを身につけ、収益化までサポート"
+      features:
+        - "高度なテクニック"
+        - "収益化戦略"
+        - "修了証発行"
+      icon: "🏆"
+      card_border: "2px solid #4A3B5C"
+
+# ========================================
+# お客様の声セクション（Testimonials）
+# ========================================
+testimonials:
+  section_title: "受講者の声"
+  section_subtitle: "実際に成果を出された方々のリアルな声"
+  background_color: "#F5F5F7"
+  padding: "80px 20px"
+
+  items:
+    - name: "田中 美咲さん"
+      age: "30代女性"
+      occupation: "会社員"
+      image: "/images/testimonial-1.jpg"
+      rating: 5
+      comment: "3ヶ月で月収が2倍になりました！丁寧なサポートで初心者の私でも安心して学べました。"
+      result: "月収 20万円 → 40万円"
+      card_background: "#FFFFFF"
+      card_padding: "24px"
+      card_border_radius: "12px"
+      card_shadow: "0 4px 8px rgba(0, 0, 0, 0.1)"
+
+    - name: "佐藤 健太さん"
+      age: "40代男性"
+      occupation: "フリーランス"
+      image: "/images/testimonial-2.jpg"
+      rating: 5
+      comment: "諦めかけていた夢が叶いました。このプログラムに出会えて本当に良かったです。"
+      result: "独立成功"
+      card_background: "#FFFFFF"
+      card_padding: "24px"
+      card_border_radius: "12px"
+      card_shadow: "0 4px 8px rgba(0, 0, 0, 0.1)"
+
+    - name: "鈴木 愛子さん"
+      age: "20代女性"
+      occupation: "主婦"
+      image: "/images/testimonial-3.jpg"
+      rating: 5
+      comment: "子育てしながらでも無理なく学べました。LINEサポートが本当に助かりました！"
+      result: "在宅で月15万円達成"
+      card_background: "#FFFFFF"
+      card_padding: "24px"
+      card_border_radius: "12px"
+      card_shadow: "0 4px 8px rgba(0, 0, 0, 0.1)"
+
+  layout: "carousel"
+  items_per_view: 3
+  mobile_items_per_view: 1
+  auto_play: true
+  auto_play_interval: 5000
+
+# ========================================
+# 料金プランセクション（Pricing）
+# ========================================
+pricing:
+  section_title: "料金プラン"
+  section_subtitle: "今だけ特別価格でご提供"
+  background_color: "#FFFFFF"
+  padding: "80px 20px"
+
+  plans:
+    - name: "ベーシックプラン"
+      description: "まずは試してみたい方におすすめ"
+      price: "98,000"
+      currency: "¥"
+      period: "3ヶ月"
+      original_price: "198,000"
+      discount_rate: "50% OFF"
+      features:
+        - "✅ 全カリキュラムアクセス"
+        - "✅ LINEサポート（平日のみ）"
+        - "✅ グループセッション参加"
+        - "✅ 修了証発行"
+      recommended: false
+      card_background: "#F5F5F7"
+
+    - name: "プレミアムプラン"
+      description: "本気で成果を出したい方に"
+      price: "198,000"
+      currency: "¥"
+      period: "3ヶ月"
+      original_price: "398,000"
+      discount_rate: "50% OFF"
+      features:
+        - "✅ 全カリキュラムアクセス"
+        - "✅ LINEサポート（24時間対応）"
+        - "✅ 個別コンサルティング月2回"
+        - "✅ グループセッション参加"
+        - "✅ 特典教材プレゼント"
+        - "✅ 修了証発行"
+        - "✅ 永久サポート"
+      recommended: true
+      card_background: "#4A3B5C"
+      card_text_color: "#FFFFFF"
+      badge: "人気No.1"
+      badge_color: "#FFD700"
+
+    - name: "VIPプラン"
+      description: "最短で結果を出したい方へ"
+      price: "398,000"
+      currency: "¥"
+      period: "3ヶ月"
+      original_price: "798,000"
+      discount_rate: "50% OFF"
+      features:
+        - "✅ 全カリキュラムアクセス"
+        - "✅ LINEサポート（24時間対応）"
+        - "✅ 個別コンサルティング週1回"
+        - "✅ マンツーマン指導"
+        - "✅ 特典教材フルセット"
+        - "✅ 収益化保証プログラム"
+        - "✅ 修了証発行"
+        - "✅ 永久VIPサポート"
+      recommended: false
+      card_background: "#F5F5F7"
+
+  cta_button:
+    text: "今すぐ申し込む"
+    background_color: "#7FE86C"
+    text_color: "#FFFFFF"
+
+# ========================================
+# FAQ セクション
+# ========================================
+faq:
+  section_title: "よくある質問"
+  background_color: "#F5F5F7"
+  padding: "80px 20px"
+
+  items:
+    - question: "初心者でも大丈夫ですか？"
+      answer: "もちろんです！プログラムは完全に初心者向けに設計されており、基礎から丁寧に学べます。講師がマンツーマンでサポートしますので安心してください。"
+
+    - question: "どのくらいの時間が必要ですか？"
+      answer: "週に10-15時間程度を推奨していますが、ご自身のペースで進められます。忙しい方でも無理なく続けられるようサポートします。"
+
+    - question: "返金保証はありますか？"
+      answer: "はい、30日間の全額返金保証をご用意しています。プログラムにご満足いただけない場合は、理由を問わず全額返金いたします。"
+
+    - question: "支払い方法は？"
+      answer: "クレジットカード、銀行振込、分割払い（最大12回）に対応しています。詳細はお申し込み時にご案内します。"
+
+    - question: "修了後のサポートは？"
+      answer: "プレミアムプラン以上では、プログラム修了後も永久にLINEサポートをご利用いただけます。いつでもご相談ください。"
+
+  accordion_style:
+    border_color: "#4A3B5C"
+    question_background: "#FFFFFF"
+    answer_background: "#F9F9FB"
+    icon_color: "#7FE86C"
+
+# ========================================
+# CTA セクション（最終アクション）
+# ========================================
+final_cta:
+  background_color: "#4A3B5C"
+  background_image: null
+  padding: "80px 20px"
+
+  headline:
+    text: "今すぐ人生を変える\n第一歩を踏み出そう"
+    font_size: "40px"
+    color: "#FFFFFF"
+    text_align: "center"
+    margin_bottom: "24px"
+
+  subheadline:
+    text: "先着50名限定！今なら特別価格で受講可能"
+    font_size: "18px"
+    color: "#FFD700"
+    text_align: "center"
+    margin_bottom: "40px"
+
+  urgency:
+    text: "残り枠: 12名"
+    font_size: "24px"
+    font_weight: 700
+    color: "#FF6B6B"
+    text_align: "center"
+    margin_bottom: "32px"
+    animation: "pulse"
+
+  cta_button:
+    text: "LINE友だち追加で無料相談"
+    background_color: "#7FE86C"
+    text_color: "#FFFFFF"
+    font_size: "20px"
+    font_weight: 700
+    padding: "24px 56px"
+    border_radius: "9999px"
+    box_shadow: "0 12px 24px rgba(127, 232, 108, 0.4)"
+    icon: "📱"
+    width: "100%"
+    max_width: "500px"
+
+  guarantee_badges:
+    - text: "30日間返金保証"
+      icon: "🛡️"
+    - text: "満足度98.5%"
+      icon: "⭐"
+    - text: "受講者5,000名突破"
+      icon: "🎉"
+
+# ========================================
+# Footer
+# ========================================
+footer:
+  background_color: "#2A2438"
+  text_color: "#FFFFFF"
+  padding: "48px 20px"
+
+  company_name: "株式会社でぷれ"
+  company_description: "あなたの成功を全力でサポートします"
+
+  links:
+    - text: "プライバシーポリシー"
+      url: "/privacy"
+    - text: "特定商取引法に基づく表記"
+      url: "/legal"
+    - text: "利用規約"
+      url: "/terms"
+    - text: "お問い合わせ"
+      url: "/contact"
+
+  social_links:
+    - platform: "LINE"
+      url: "https://line.me/R/ti/p/@example"
+      icon: "📱"
+    - platform: "Instagram"
+      url: "https://instagram.com/example"
+      icon: "📷"
+    - platform: "Twitter"
+      url: "https://twitter.com/example"
+      icon: "🐦"
+
+  copyright: "© 2025 でぷれ All Rights Reserved."
+
+  disclaimer:
+    text: "※ 個人の成果には個人差があります。本プログラムは成果を保証するものではありません。"
+    font_size: "12px"
+    color: "#999999"
+
+# ========================================
+# アニメーション設定
+# ========================================
+animations:
+  fade_in:
+    duration: "0.6s"
+    easing: "ease-out"
+
+  slide_up:
+    duration: "0.8s"
+    easing: "ease-out"
+    distance: "30px"
+
+  scale_on_hover:
+    scale: 1.05
+    duration: "0.3s"
+
+  button_hover:
+    transform: "translateY(-2px)"
+    duration: "0.2s"
+
+  pulse:
+    duration: "1.5s"
+    easing: "ease-in-out"
+    iteration: "infinite"
+
+# ========================================
+# レスポンシブ設定
+# ========================================
+responsive:
+  breakpoints:
+    mobile: "480px"
+    tablet: "768px"
+    desktop: "1024px"
+    wide: "1280px"
+
+  mobile_adjustments:
+    hero_headline_size: "32px"
+    section_padding: "48px 16px"
+    grid_columns: 1
+    button_width: "100%"
+
+  tablet_adjustments:
+    hero_headline_size: "40px"
+    section_padding: "64px 24px"
+    grid_columns: 2
+
+# ========================================
+# SEO & メタ情報
+# ========================================
+seo:
+  og_title: "でぷれLP - 3ヶ月で人生を変えるプログラム"
+  og_description: "初心者でも安心！完全個別サポートで、あなたの成功を全力でサポート。今なら特別価格で受講可能。"
+  og_image: "/images/og-image.jpg"
+  og_url: "https://example.com/depre-lp"
+  twitter_card: "summary_large_image"
+  keywords: "プログラム,オンライン講座,スキルアップ,副業,収益化"

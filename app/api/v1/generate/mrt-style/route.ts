@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { tomyStyleAgent, scoreTOMYStyle } from '@/lib/tomy-style-agent'
+import { mrtStyleAgent, scoreMrTStyle } from '@/lib/mrt-style-agent'
 import { db } from '@/lib/db'
 import { logs } from '@/drizzle/schema'
 
 /**
- * POST /api/v1/generate/tomy-style
+ * POST /api/v1/generate/mrt-style
  *
- * TOMYスタイル黄金律に基づいてLP文案を生成
+ * MrTスタイル黄金律に基づいてLP文案を生成
  *
  * Body:
  * {
@@ -34,8 +34,8 @@ export async function POST(request: NextRequest) {
 
     const startTime = Date.now()
 
-    // TOMYスタイルエージェントで生成
-    const result = await tomyStyleAgent({
+    // MrTスタイルエージェントで生成
+    const result = await mrtStyleAgent({
       productName,
       targetAudience,
       mainBenefit,
@@ -49,15 +49,15 @@ export async function POST(request: NextRequest) {
 
     // スコアリング
     const htmlContent = result.sections.map((s) => s.html).join('\n')
-    const score = scoreTOMYStyle(htmlContent)
+    const score = scoreMrTStyle(htmlContent)
 
     // ログ記録
     await db.insert(logs).values({
       userId: 'system', // 本来は認証から取得
-      type: 'tomy_style_generation',
+      type: 'mrt_style_generation',
       payloadJson: {
         input: { productName, targetAudience, mainBenefit },
-        output: { tomy_score: result.metadata.tomy_score, score: score.score },
+        output: { mrt_score: result.metadata.mrt_score, score: score.score },
       } as any,
       costTokensIn: 1000, // 推定
       costTokensOut: 3000, // 推定
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
       executionTimeMs: executionTime,
     })
   } catch (error) {
-    console.error('[TOMYStyleAPI] Error:', error)
+    console.error('[MrTStyleAPI] Error:', error)
     return NextResponse.json(
       {
         error: 'Internal server error',
@@ -82,9 +82,9 @@ export async function POST(request: NextRequest) {
 }
 
 /**
- * GET /api/v1/generate/tomy-style/knowledge
+ * GET /api/v1/generate/mrt-style/knowledge
  *
- * TOMYスタイルナレッジの概要を取得
+ * MrTスタイルナレッジの概要を取得
  */
 export async function GET() {
   return NextResponse.json({

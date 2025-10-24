@@ -1,0 +1,90 @@
+type: "Frame"
+layout_mode: "VERTICAL"
+background_color: "#1a1a2e"
+padding:
+  top: 60
+  right: 60
+  bottom: 60
+  left: 60
+spacing: 30
+corner_radius: 15
+stroke:
+  color: "#F59E0B"
+  weight: 3
+
+children:
+  # 質問セクション
+  - type: "Text"
+    content: "{{question}}"
+    font:
+      family: "Noto Sans JP"
+      weight: "Regular"
+      size: 20
+    fills:
+      - type: "SOLID"
+        color: "#FFFFFF"
+    highlights:
+      - text: "事務経験しかない"
+        color: "#F59E0B"
+
+  # 見出しセクション
+  - type: "Frame"
+    layout_mode: "VERTICAL"
+    spacing: 10
+    children:
+      - type: "Text"
+        content: "{{subheadline}}"
+        font:
+          family: "Noto Sans JP"
+          weight: "Medium"
+          size: 16
+        fills:
+          - type: "SOLID"
+            color: "#F59E0B"
+
+      - type: "Text"
+        content: "{{headline}}"
+        font:
+          family: "Noto Sans JP"
+          weight: "Bold"
+          size: 28
+        fills:
+          - type: "SOLID"
+            color: "#FFFFFF"
+
+  # オファーセクション
+  - type: "Text"
+    content: "{{offer}}"
+    font:
+      family: "Noto Sans JP"
+      weight: "Regular"
+      size: 18
+    fills:
+      - type: "SOLID"
+        color: "#CCCCCC"
+    highlights:
+      - text: "事務スキル"
+        color: "#F59E0B"
+      - text: "在宅ワーク"
+        color: "#F59E0B"
+
+  # CTAボタン
+  - type: "Frame"
+    layout_mode: "HORIZONTAL"
+    background_color: "#F59E0B"
+    padding:
+      top: 16
+      right: 40
+      bottom: 16
+      left: 40
+    corner_radius: 8
+    children:
+      - type: "Text"
+        content: "詳しく見る"
+        font:
+          family: "Noto Sans JP"
+          weight: "Bold"
+          size: 20
+        fills:
+          - type: "SOLID"
+            color: "#1a1a2e"

@@ -1,0 +1,62 @@
+type: "Frame"
+layout_mode: "HORIZONTAL"
+background_color: "#FFFFFF"
+padding:
+  top: 40
+  right: 40
+  bottom: 40
+  left: 40
+spacing: 30
+
+children:
+  # 左側：画像
+  - type: "Image"
+    content: "product-image.jpg"
+    width: 300
+    height: 300
+    corner_radius: 15
+
+  # 右側：テキストコンテンツ
+  - type: "Frame"
+    layout_mode: "VERTICAL"
+    spacing: 20
+    children:
+      - type: "Text"
+        content: "{{product_name}}"
+        font:
+          family: "Noto Sans JP"
+          weight: "Bold"
+          size: 32
+        fills:
+          - type: "SOLID"
+            color: "#1a1a2e"
+
+      - type: "Text"
+        content: "{{description}}"
+        font:
+          family: "Noto Sans JP"
+          weight: "Regular"
+          size: 16
+        fills:
+          - type: "SOLID"
+            color: "#666666"
+
+      - type: "Frame"
+        layout_mode: "VERTICAL"
+        background_color: "#F59E0B"
+        padding:
+          top: 12
+          right: 24
+          bottom: 12
+          left: 24
+        corner_radius: 6
+        children:
+          - type: "Text"
+            content: "{{price}}"
+            font:
+              family: "Noto Sans JP"
+              weight: "Bold"
+              size: 24
+            fills:
+              - type: "SOLID"
+                color: "#FFFFFF"

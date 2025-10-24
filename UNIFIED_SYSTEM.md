@@ -2,13 +2,13 @@
 
 ## 📋 概要
 
-TOMYスタイル黄金律（13LP分析）とYAML自動分析ナレッジを統合した、最高品質のLP自動生成システムを構築しました。
+MrTスタイル黄金律（13LP分析）とYAML自動分析ナレッジを統合した、最高品質のLP自動生成システムを構築しました。
 
 **目標達成:**
-- ✅ 方法1（TOMYスタイル手動指定）実装完了
+- ✅ 方法1（MrTスタイル手動指定）実装完了
 - ✅ 方法2（YAML自動分析）実装完了
 - ✅ 方法1+2の完全統合実装完了
-- ✅ 目標品質: TOMYスコア95点以上
+- ✅ 目標品質: MrTスコア95点以上
 
 ## 🎯 システムの特徴
 
@@ -41,7 +41,7 @@ YAML入力
 └─────────────────────────────┘
 ```
 
-### 2. TOMYスタイル黄金律
+### 2. MrTスタイル黄金律
 
 13LP徹底分析から抽出した実証済みパターン:
 
@@ -58,13 +58,13 @@ YAML入力
 3つのモードを自動選択:
 
 **🔥 自動統合モード（推奨）**
-- TOMYスタイル黄金律 100%適用
+- MrTスタイル黄金律 100%適用
 - ナレッジベース自動取得（信頼度順TOP10）
 - YAML分析結果統合（提供時）
 - 目標: 95点以上
 
-**TOMYスタイル専用**
-- TOMYスタイルのみ
+**MrTスタイル専用**
+- MrTスタイルのみ
 - 目標: 90点以上
 
 **ナレッジベース専用**
@@ -78,7 +78,7 @@ YAML入力
 | ファイル | 説明 | 重要度 |
 |---------|------|--------|
 | `lib/unified-lp-generator.ts` | 統合生成マスター | ⭐⭐⭐ |
-| `lib/tomy-style-agent.ts` | TOMYスタイルエージェント | ⭐⭐⭐ |
+| `lib/mrt-style-agent.ts` | MrTスタイルエージェント | ⭐⭐⭐ |
 | `lib/knowledge-team.ts` | 3エージェント分析チーム | ⭐⭐⭐ |
 | `drizzle/schema.ts` | DBスキーマ（3テーブル追加） | ⭐⭐⭐ |
 
@@ -88,7 +88,7 @@ YAML入力
 |---------------|---------|------|
 | `/api/v1/generate/unified` | POST | 統合LP生成 |
 | `/api/v1/generate/unified/modes` | GET | モード説明取得 |
-| `/api/v1/generate/tomy-style` | POST | TOMYスタイル専用生成 |
+| `/api/v1/generate/mrt-style` | POST | MrTスタイル専用生成 |
 | `/api/v1/knowledge/analyze` | POST | YAML分析開始 |
 | `/api/v1/knowledge/analyze/:jobId` | GET | 分析ステータス確認 |
 | `/api/v1/knowledge/list` | GET | ナレッジ一覧 |
@@ -103,7 +103,7 @@ YAML入力
 
 | スクリプト | 説明 | 実行コマンド |
 |-----------|------|-------------|
-| `scripts/import-tomy-knowledge.ts` | TOMYナレッジインポート | `npx tsx scripts/import-tomy-knowledge.ts` |
+| `scripts/import-mrt-knowledge.ts` | MrTナレッジインポート | `npx tsx scripts/import-mrt-knowledge.ts` |
 
 ## 🗄️ データベーススキーマ
 
@@ -169,7 +169,7 @@ CREATE TABLE knowledge_analysis_jobs (
 
 **用途**: YAML分析ジョブの進捗管理
 
-## 🔍 TOMYスタイル黄金パターン詳細
+## 🔍 MrTスタイル黄金パターン詳細
 
 ### パターン1: ヘッドライン3点セット（信頼度95%）
 
@@ -217,7 +217,7 @@ CREATE TABLE knowledge_analysis_jobs (
 ルール:
 ✅ 時間と数量の両方を制限
 ✅ 失うもの（機会損失）を明示
-✅ TOMYスタイルでは100%出現（一般LPは62%）
+✅ MrTスタイルでは100%出現（一般LPは62%）
 ```
 
 ### パターン4: キラーワードTOP30
@@ -269,7 +269,7 @@ Good: 首吊って死んでいたかもしれません、借金120万円、水�
 
 ## 📈 品質スコアリング
 
-### TOMYスコア（0-100点）
+### MrTスコア（0-100点）
 
 ```typescript
 {
@@ -285,8 +285,8 @@ Good: 首吊って死んでいたかもしれません、借金120万円、水�
 
 | モード | 目標 | 適用パターン |
 |--------|------|------------|
-| 自動統合 | 95点 | TOMY 100% + ナレッジ + YAML |
-| TOMYスタイル専用 | 90点 | TOMY 100% |
+| 自動統合 | 95点 | MrT 100% + ナレッジ + YAML |
+| MrTスタイル専用 | 90点 | MrT 100% |
 | ナレッジベース専用 | 85点 | ナレッジ + YAML |
 
 ## 🚀 使用方法
@@ -298,8 +298,8 @@ Good: 首吊って死んでいたかもしれません、借金120万円、水�
 npm run db:generate
 npm run db:migrate
 
-# 2. TOMYナレッジインポート
-npx tsx scripts/import-tomy-knowledge.ts
+# 2. MrTナレッジインポート
+npx tsx scripts/import-mrt-knowledge.ts
 
 # 3. 開発サーバー起動
 npm run dev
@@ -353,9 +353,9 @@ curl -X POST http://localhost:3000/api/v1/generate/unified \
     "sections": [...7セクション]
   },
   "metadata": {
-    "tomy_score": 96,
+    "mrt_score": 96,
     "knowledge_items_used": 10,
-    "generation_method": "unified_tomy_knowledge"
+    "generation_method": "unified_mrt_knowledge"
   },
   "quality_score": {
     "overall": 96,
@@ -431,7 +431,7 @@ DB保存（lp_knowledge）
 |-----------|---|
 | 平均生成時間 | 3.5秒 |
 | トークン使用量 | 約4,000トークン（自動統合モード） |
-| 目標TOMYスコア | 95点以上 |
+| 目標MrTスコア | 95点以上 |
 | 実績平均スコア | 93-97点（想定） |
 
 ## 🎯 次のステップ（オプション）
@@ -449,24 +449,24 @@ DB保存（lp_knowledge）
    - ナレッジ信頼度の動的調整
 
 4. **多言語対応**
-   - 英語版TOMYパターン
+   - 英語版MrTパターン
    - 翻訳品質維持
 
 ## 📝 まとめ
 
 ✅ **完了した実装:**
 - 3エージェント分析チーム（Analysis, Knowledge Extraction, Prompt Generation）
-- TOMYスタイル黄金律（13LP分析、信頼度85-98%）
-- 統合生成システム（3モード: auto/tomy_only/knowledge_only）
-- 品質スコアリング（TOMYスコア + 5項目詳細評価）
+- MrTスタイル黄金律（13LP分析、信頼度85-98%）
+- 統合生成システム（3モード: auto/mrt_only/knowledge_only）
+- 品質スコアリング（MrTスコア + 5項目詳細評価）
 - 自己改善システム（ナレッジ蓄積）
 - 統合LP生成UI（`/generate`）
 - API エンドポイント一式
 - DBスキーマ拡張（3テーブル追加）
-- TOMYナレッジインポートスクリプト
+- MrTナレッジインポートスクリプト
 
 ✅ **達成した目標:**
-- 方法1（TOMYスタイル手動指定）と方法2（YAML自動分析）の完全統合
+- 方法1（MrTスタイル手動指定）と方法2（YAML自動分析）の完全統合
 - 目標品質95点以上を達成可能なシステム
 - 自己改善による継続的な品質向上
 
@@ -476,5 +476,5 @@ DB保存（lp_knowledge）
 
 **Powered by:**
 - Anthropic Claude 3.5 Sonnet
-- TOMYスタイル黄金律（13LP分析）
+- MrTスタイル黄金律（13LP分析）
 - Multi-Agent Architecture

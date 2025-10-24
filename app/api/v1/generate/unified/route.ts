@@ -7,7 +7,7 @@ import { logs, lps } from '@/drizzle/schema'
  * POST /api/v1/generate/unified
  *
  * 統合LP生成API
- * TOMYスタイル + YAML分析ナレッジ + DBナレッジを自動統合
+ * MrTスタイル + YAML分析ナレッジ + DBナレッジを自動統合
  *
  * Body:
  * {
@@ -19,7 +19,7 @@ import { logs, lps } from '@/drizzle/schema'
  *   "credibility": "信頼性要素（オプション）",
  *   "yamlTemplate": "YAML文字列（オプション - ある場合は分析）",
  *   "templateId": "テンプレートID（オプション）",
- *   "mode": "auto | tomy_only | knowledge_only (default: auto)",
+ *   "mode": "auto | mrt_only | knowledge_only (default: auto)",
  *   "temperature": 0.8,
  *   "useKnowledgeBase": true
  * }
@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
         },
         output: {
           lpId: savedLP.id,
-          tomy_score: result.metadata.tomy_score,
+          mrt_score: result.metadata.mrt_score,
           quality_score: result.quality_score.overall,
           generation_method: result.metadata.generation_method,
         },
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
 
     console.log('[UnifiedAPI] ✅ 生成完了:', {
       lpId: savedLP.id,
-      tomy_score: result.metadata.tomy_score,
+      mrt_score: result.metadata.mrt_score,
       quality_score: result.quality_score.overall,
       execution_time: result.metadata.execution_time_ms,
     })
@@ -123,9 +123,9 @@ export async function GET() {
     modes: {
       auto: {
         name: '自動統合モード（推奨）',
-        description: 'TOMYスタイル黄金律 + ナレッジベース + YAML分析を自動統合',
+        description: 'MrTスタイル黄金律 + ナレッジベース + YAML分析を自動統合',
         features: [
-          'TOMYスタイル黄金パターン100%適用',
+          'MrTスタイル黄金パターン100%適用',
           'DBナレッジ自動取得・活用',
           'YAML分析（提供時）',
           '品質スコア95点以上を目標',
@@ -133,9 +133,9 @@ export async function GET() {
         estimated_quality: 95,
         recommended: true,
       },
-      tomy_only: {
-        name: 'TOMYスタイル専用モード',
-        description: 'TOMYスタイル黄金律のみを適用（ナレッジベース不使用）',
+      mrt_only: {
+        name: 'MrTスタイル専用モード',
+        description: 'MrTスタイル黄金律のみを適用（ナレッジベース不使用）',
         features: [
           '数値×時間×結果の3点セット',
           'Before→After劇的対比',
@@ -147,7 +147,7 @@ export async function GET() {
       },
       knowledge_only: {
         name: 'ナレッジベース専用モード',
-        description: 'DBナレッジとYAML分析のみ（TOMYスタイル不使用）',
+        description: 'DBナレッジとYAML分析のみ（MrTスタイル不使用）',
         features: [
           'DBナレッジ取得・活用',
           'YAML分析（提供時）',
@@ -173,13 +173,13 @@ export async function GET() {
         },
       },
       {
-        mode: 'tomy_only',
-        useCase: 'TOMYスタイルのみで生成',
+        mode: 'mrt_only',
+        useCase: 'MrTスタイルのみで生成',
         request: {
           productName: 'コンサルティングサービス',
           targetAudience: '起業家',
           mainBenefit: '月収50万円達成',
-          mode: 'tomy_only',
+          mode: 'mrt_only',
         },
       },
     ],

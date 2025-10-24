@@ -1,0 +1,56 @@
+background_color: '#FFFFFF'
+children:
+- content: product-image.jpg
+  corner_radius: 15
+  height: 300
+  type: Image
+  width: 300
+- children:
+  - content: 革新的なプロダクト
+    fills:
+    - color: '#1a1a2e'
+      type: SOLID
+    font:
+      family: Noto Sans JP
+      size: 32
+      weight: Bold
+    type: Text
+  - content: 最新のテクノロジーを採用した 次世代のソリューション
+    fills:
+    - color: '#666666'
+      type: SOLID
+    font:
+      family: Noto Sans JP
+      size: 16
+      weight: Regular
+    type: Text
+  - background_color: '#F59E0B'
+    children:
+    - content: ¥29,800
+      fills:
+      - color: '#FFFFFF'
+        type: SOLID
+      font:
+        family: Noto Sans JP
+        size: 24
+        weight: Bold
+      type: Text
+    corner_radius: 6
+    layout_mode: VERTICAL
+    padding:
+      bottom: 12
+      left: 24
+      right: 24
+      top: 12
+    type: Frame
+  layout_mode: VERTICAL
+  spacing: 20
+  type: Frame
+layout_mode: HORIZONTAL
+padding:
+  bottom: 40
+  left: 40
+  right: 40
+  top: 40
+spacing: 30
+type: Frame

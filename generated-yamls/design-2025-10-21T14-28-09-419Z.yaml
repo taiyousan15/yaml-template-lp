@@ -1,0 +1,294 @@
+# LP完全再現テンプレート
+# このYAMLは元のLPのデザインとレイアウトを完全に再現します
+
+meta:
+  template_version: "1.0"
+  generated_at: "2025-10-21T14:28:09.237Z"
+  total_sections: 5
+
+# セクション定義
+sections:
+
+  # セクション 1: hero
+  # AIの時代からこそ輝くあなたの強みを見つけましょう
+  hero:
+    type: "hero"
+
+    layout:
+      type: "flex"
+      alignment: "left"
+      padding: "80px 20px"
+      maxWidth: "1200px"
+      minHeight: "600px"
+      gap: "24px"
+
+    background:
+      type: "gradient"
+      color: "#ffffff"
+
+    texts:
+      - content: "AI時代だからこそ輝くあなたの強みを見つけましょう"
+        role: "headline"
+        fontSize: "text-4xl"
+        fontWeight: "bold"
+        color: "#ffffff"
+        alignment: "left"
+        lineHeight: "leading-tight"
+        letterSpacing: "tracking-normal"
+        textShadow: "0 2px 4px rgba(0, 0, 0, 0.5)"
+
+      - content: "強みをAIで拡張×弱みをAIで補完\n「たった5日」であなたの中に眠る"
+        role: "subheadline"
+        fontSize: "text-2xl"
+        fontWeight: "medium"
+        color: "#ffffff"
+        alignment: "left"
+        lineHeight: "leading-relaxed"
+        letterSpacing: "tracking-normal"
+
+      - content: "AI時代だからこそ輝くあなたの強みを見つけましょう"
+        role: "caption"
+        fontSize: "text-base"
+        fontWeight: "normal"
+        color: "#cccccc"
+        alignment: "left"
+        lineHeight: "leading-normal"
+        letterSpacing: "tracking-normal"
+
+    buttons:
+      - text: "詳細を確認する"
+        bgGradient:
+          from: "#6b46c1"
+          to: "#805ad5"
+          direction: "to-right"
+        textColor: "#ffffff"
+        width: "auto"
+        height: "48px"
+        padding: "0 24px"
+        fontSize: "text-lg"
+        fontWeight: "medium"
+        borderRadius: "9999px"
+        border:
+          color: "#6b46c1"
+          width: "2"
+        shadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
+
+    images:
+      - type: "decoration"
+        description: "背景の渦巻き"
+        position:
+          top: "10%"
+          left: "80%"
+        size:
+          width: "300px"
+          height: "300px"
+        borderRadius: "full"
+        opacity: 0.5
+        zIndex: -1
+      - type: "decoration"
+        description: "背景の点滅エフェクト"
+        position:
+          top: "20%"
+          left: "10%"
+        size:
+          width: "100px"
+          height: "100px"
+        borderRadius: "full"
+        opacity: 0.3
+        zIndex: -1
+
+    decorations:
+      - type: "line"
+        description: "ボタンの下の装飾線"
+        color: "#6b46c1"
+        position: "[object Object]"
+        size: "[object Object]"
+
+
+
+  # セクション 2: problem
+  # あなただけの隠れた才能を覚醒させ、AIと共に人生をさらに設計する
+  problem:
+    type: "features"
+
+    layout:
+      type: "flex"
+      alignment: "center"
+      padding: "80px 20px"
+      maxWidth: "1200px"
+
+    background:
+      type: "solid"
+      color: "#ffffff"
+
+
+
+  # セクション 3: solution
+  # たった5日で、弱みをAIで拡張し、強みをAIで補完
+  solution:
+    type: "features"
+
+    layout:
+      type: "flex"
+      alignment: "center"
+      padding: "80px 20px"
+      maxWidth: "1200px"
+
+    background:
+      type: "solid"
+      color: "#ffffff"
+
+
+
+  # セクション 4: cta
+  # 10月20日までの期間限定で無料ご招待
+  cta:
+    type: "cta"
+
+    layout:
+      type: "flex"
+      alignment: "center"
+      padding: "80px 20px"
+      maxWidth: "1200px"
+      minHeight: "600px"
+
+    background:
+      type: "gradient"
+      color: "#ffffff"
+
+    texts:
+      - content: "10月20日までの期間限定で無料ご招待"
+        role: "headline"
+        fontSize: "text-4xl"
+        fontWeight: "bold"
+        color: "#FFFFFF"
+        alignment: "center"
+        lineHeight: "leading-tight"
+        letterSpacing: "tracking-wide"
+
+    buttons:
+      - text: "今すぐ応募する"
+        bgColor: "#FFFFFF"
+        textColor: "#7F00FF"
+        width: "200px"
+        height: "60px"
+        padding: "16px 24px"
+        fontSize: "text-lg"
+        fontWeight: "bold"
+        borderRadius: "rounded-full"
+        shadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
+
+    images:
+      - type: "decoration"
+        description: "背景装飾のイラスト"
+        position:
+          top: "0"
+          left: "0"
+        size:
+          width: "100%"
+          height: "100%"
+        opacity: 0.2
+        zIndex: -1
+
+    decorations:
+      - type: "line"
+        description: "ボーダーライン"
+        color: "#FFFFFF"
+        position: "top"
+        size: "[object Object]"
+
+
+
+  # セクション 5: details
+  # 10/21(木)~10/29(金)の5日間開催
+  details:
+    type: "features"
+
+    layout:
+      type: "flex"
+      alignment: "left"
+      padding: "80px 20px"
+      maxWidth: "1200px"
+      minHeight: "auto"
+      gap: "0px"
+
+    background:
+      type: "solid"
+      color: "#000000"
+
+    texts:
+      - content: "5日間限定\nタイムセール Days"
+        role: "headline"
+        fontSize: "text-5xl"
+        fontWeight: "bold"
+        color: "#FFFFFF"
+        alignment: "left"
+        lineHeight: "leading-tight"
+        letterSpacing: "tracking-wider"
+        textShadow: "2px 2px 4px rgba(0,0,0,0.5)"
+        position:
+          vertical: "top"
+          horizontal: "left"
+
+      - content: "10/21(木)~10/29(金)の5日間開催"
+        role: "body"
+        fontSize: "text-base"
+        fontWeight: "normal"
+        color: "#FFFFFF"
+        alignment: "left"
+        lineHeight: "leading-normal"
+        letterSpacing: "tracking-normal"
+        position:
+          vertical: "middle"
+          horizontal: "left"
+
+    buttons:
+      - text: "詳細を見る"
+        bgColor: "#FFA500"
+        textColor: "#000000"
+        width: "auto"
+        height: "auto"
+        padding: "12px 24px"
+        fontSize: "text-base"
+        fontWeight: "bold"
+        borderRadius: "rounded-full"
+        shadow: "none"
+
+    images:
+      - type: "decoration"
+        description: "背景パターン"
+        position:
+          top: "0%"
+          left: "0%"
+        size:
+          width: "100%"
+          height: "100%"
+        opacity: 0.2
+        zIndex: -1
+
+    decorations:
+      - type: "line"
+        description: "上部装飾線"
+        color: "#FFA500"
+        position: "top"
+        size: "4px"
+      - type: "line"
+        description: "下部装飾線"
+        color: "#FFA500"
+        position: "bottom"
+        size: "4px"
+
+
+
+# 編集ガイド
+# このテンプレートでは以下の項目を編集できます:
+#
+# [heroセクション]
+#   - テキスト1: "AI時代だからこそ輝くあなたの強みを見つけましょう..."
+#   - テキスト2: "強みをAIで拡張×弱みをAIで補完「たった5日」であなたの..."
+#   - テキスト3: "AI時代だからこそ輝くあなたの強みを見つけましょう..."
+# [ctaセクション]
+#   - テキスト1: "10月20日までの期間限定で無料ご招待..."
+# [detailsセクション]
+#   - テキスト1: "5日間限定タイムセール Days..."
+#   - テキスト2: "10/21(木)~10/29(金)の5日間開催..."

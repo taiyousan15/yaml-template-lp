@@ -1,0 +1,81 @@
+background_color: '#1a1a2e'
+children:
+- content: Excelとメールぐらいしか使えない 事務経験しかない私に 在宅ワークなんてできるの…？
+  fills:
+  - color: '#FFFFFF'
+    type: SOLID
+  font:
+    family: Noto Sans JP
+    size: 20
+    weight: Regular
+  highlights:
+  - color: '#F59E0B'
+    text: 事務経験しかない
+  type: Text
+- children:
+  - content: ＼事務経験だけでOK！／
+    fills:
+    - color: '#F59E0B'
+      type: SOLID
+    font:
+      family: Noto Sans JP
+      size: 16
+      weight: Medium
+    type: Text
+  - content: 不安を抱えた女性たちの"新しい働き方"
+    fills:
+    - color: '#FFFFFF'
+      type: SOLID
+    font:
+      family: Noto Sans JP
+      size: 28
+      weight: Bold
+    type: Text
+  layout_mode: VERTICAL
+  spacing: 10
+  type: Frame
+- content: 報われない働き方に終止符を 事務スキルで始める在宅ワーク教えます
+  fills:
+  - color: '#CCCCCC'
+    type: SOLID
+  font:
+    family: Noto Sans JP
+    size: 18
+    weight: Regular
+  highlights:
+  - color: '#F59E0B'
+    text: 事務スキル
+  - color: '#F59E0B'
+    text: 在宅ワーク
+  type: Text
+- background_color: '#F59E0B'
+  children:
+  - content: 詳しく見る
+    fills:
+    - color: '#1a1a2e'
+      type: SOLID
+    font:
+      family: Noto Sans JP
+      size: 20
+      weight: Bold
+    type: Text
+  corner_radius: 8
+  layout_mode: HORIZONTAL
+  padding:
+    bottom: 16
+    left: 40
+    right: 40
+    top: 16
+  type: Frame
+corner_radius: 15
+layout_mode: VERTICAL
+padding:
+  bottom: 60
+  left: 60
+  right: 60
+  top: 60
+spacing: 30
+stroke:
+  color: '#F59E0B'
+  weight: 3
+type: Frame

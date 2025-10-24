@@ -176,6 +176,24 @@ export const imagesRelations = relations(images, ({ one }) => ({
   }),
 }));
 
+// YAML Generation History (高度YAML生成の履歴)
+export const yamlGenerationHistory = pgTable('yaml_generation_history', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  userId: text('user_id').notNull(),
+  sourceImageUrl: text('source_image_url').notNull(),
+  generatedYaml: text('generated_yaml').notNull(),
+  metadata: jsonb('metadata'), // { totalSegments, totalTextBlocks, confidence, steps }
+  name: text('name'), // ユーザーが設定する名前（オプション）
+  tags: text('tags').array(), // 検索用タグ
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// Relations for YAML Generation History
+export const yamlGenerationHistoryRelations = relations(yamlGenerationHistory, ({ one }) => ({
+  // 必要に応じてユーザーとのリレーションを追加
+}));
+
 // Zod schemas for validation (要drizzle-zod)
 // TODO: drizzle-ormを0.36+にアップグレード後に有効化
 // export const insertUserSchema = createInsertSchema(users);

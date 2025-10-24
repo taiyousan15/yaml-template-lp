@@ -1,7 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { z } from 'zod'
 import { runKnowledgeTeam } from './knowledge-team'
-import { tomyStyleAgent, scoreTOMYStyle, TOMY_STYLE_KNOWLEDGE } from './tomy-style-agent'
+import { mrtStyleAgent, scoreMrTStyle, MrT_STYLE_KNOWLEDGE } from './mrt-style-agent'
 import { db } from './db'
 import { lpKnowledge } from '@/drizzle/schema'
 import { desc } from 'drizzle-orm'
@@ -33,7 +33,7 @@ export const UnifiedLPInputSchema = z.object({
   templateId: z.string().optional(),
 
   // 生成設定
-  mode: z.enum(['auto', 'tomy_only', 'knowledge_only']).default('auto'),
+  mode: z.enum(['auto', 'mrt_only', 'knowledge_only']).default('auto'),
   temperature: z.number().min(0).max(1).default(0.8),
   useKnowledgeBase: z.boolean().default(true),
 })
@@ -55,7 +55,7 @@ export const UnifiedLPOutputSchema = z.object({
     ),
   }),
   metadata: z.object({
-    tomy_score: z.number(),
+    mrt_score: z.number(),
     knowledge_items_used: z.number(),
     generation_method: z.string(),
     execution_time_ms: z.number(),
@@ -98,7 +98,7 @@ export async function generateUnifiedLP(input: UnifiedLPInput): Promise<UnifiedL
     let extractedKnowledge: any[] = []
 
     // YAML分析（ある場合）
-    if (input.yamlTemplate && input.mode !== 'tomy_only') {
+    if (input.yamlTemplate && input.mode !== 'mrt_only') {
       console.log('[UnifiedLPGenerator] 📝 YAMLテンプレート分析中...')
 
       const knowledgeTeamResult = await runKnowledgeTeam(input.yamlTemplate)
@@ -115,7 +115,7 @@ export async function generateUnifiedLP(input: UnifiedLPInput): Promise<UnifiedL
 
     // DBからナレッジ取得（useKnowledgeBase: true の場合）
     let dbKnowledge: any[] = []
-    if (input.useKnowledgeBase && input.mode !== 'tomy_only') {
+    if (input.useKnowledgeBase && input.mode !== 'mrt_only') {
       console.log('[UnifiedLPGenerator] 💾 ナレッジベースから取得中...')
 
       const knowledge = await db
@@ -144,12 +144,12 @@ export async function generateUnifiedLP(input: UnifiedLPInput): Promise<UnifiedL
     let generationMethod = ''
     let lpResult: any
 
-    if (input.mode === 'tomy_only') {
-      // TOMYスタイルのみ
-      console.log('[UnifiedLPGenerator] 🎯 TOMYスタイルで生成...')
-      generationMethod = 'tomy_style_only'
+    if (input.mode === 'mrt_only') {
+      // MrTスタイルのみ
+      console.log('[UnifiedLPGenerator] 🎯 MrTスタイルで生成...')
+      generationMethod = 'mrt_style_only'
 
-      lpResult = await tomyStyleAgent({
+      lpResult = await mrtStyleAgent({
         productName: input.productName,
         targetAudience: input.targetAudience,
         mainBenefit: input.mainBenefit,
@@ -168,11 +168,11 @@ export async function generateUnifiedLP(input: UnifiedLPInput): Promise<UnifiedL
       lpResult = await generateWithKnowledge(input, combinedKnowledge)
       totalTokens += 3500 // 推定
     } else {
-      // auto: TOMYスタイル + ナレッジベースの統合（最強モード）
-      console.log('[UnifiedLPGenerator] 🔥 統合モード（TOMY + ナレッジ）で生成...')
-      generationMethod = 'unified_tomy_knowledge'
+      // auto: MrTスタイル + ナレッジベースの統合（最強モード）
+      console.log('[UnifiedLPGenerator] 🔥 統合モード（MrT + ナレッジ）で生成...')
+      generationMethod = 'unified_mrt_knowledge'
 
-      lpResult = await generateUnifiedTOMYKnowledge(input, combinedKnowledge)
+      lpResult = await generateUnifiedMrTKnowledge(input, combinedKnowledge)
       totalTokens += 4000 // 推定
     }
 
@@ -182,7 +182,7 @@ export async function generateUnifiedLP(input: UnifiedLPInput): Promise<UnifiedL
     console.log('[UnifiedLPGenerator] 📊 品質スコアリング中...')
 
     const htmlContent = lpResult.sections.map((s: any) => s.html).join('\n')
-    const qualityScore = scoreTOMYStyle(htmlContent)
+    const qualityScore = scoreMrTStyle(htmlContent)
 
     // ========================================
     // Phase 4: 結果の整形
@@ -197,7 +197,7 @@ export async function generateUnifiedLP(input: UnifiedLPInput): Promise<UnifiedL
         sections: lpResult.sections,
       },
       metadata: {
-        tomy_score: lpResult.metadata?.tomy_score || qualityScore.score,
+        mrt_score: lpResult.metadata?.mrt_score || qualityScore.score,
         knowledge_items_used: combinedKnowledge.length,
         generation_method: generationMethod,
         execution_time_ms: executionTime,
@@ -212,7 +212,7 @@ export async function generateUnifiedLP(input: UnifiedLPInput): Promise<UnifiedL
     }
 
     console.log('[UnifiedLPGenerator] ✅ 生成完了！')
-    console.log(`[UnifiedLPGenerator] TOMYスコア: ${output.metadata.tomy_score}点`)
+    console.log(`[UnifiedLPGenerator] MrTスコア: ${output.metadata.mrt_score}点`)
     console.log(`[UnifiedLPGenerator] 品質スコア: ${output.quality_score.overall}点`)
     console.log(`[UnifiedLPGenerator] 実行時間: ${executionTime}ms`)
 
@@ -270,7 +270,7 @@ JSON形式で返してください:
     }
   ],
   "metadata": {
-    "tomy_score": 85,
+    "mrt_score": 85,
     "killer_words_count": 10
   }
 }`
@@ -291,15 +291,15 @@ JSON形式で返してください:
 }
 
 /**
- * TOMYスタイル + ナレッジベース統合生成（最強モード）
+ * MrTスタイル + ナレッジベース統合生成（最強モード）
  */
-async function generateUnifiedTOMYKnowledge(
+async function generateUnifiedMrTKnowledge(
   input: UnifiedLPInput,
   knowledge: any[]
 ): Promise<any> {
-  // TOMYスタイルのコアナレッジ
-  const tomyKnowledge = `
-# TOMYスタイル 黄金パターン（必須適用）
+  // MrTスタイルのコアナレッジ
+  const mrtKnowledge = `
+# MrTスタイル 黄金パターン（必須適用）
 
 ## 1. ヘッドライン3点セット
 - 数値×時間×結果: "[期間]で[端数付き数値]を達成した[人物属性]の[感情]"
@@ -314,7 +314,7 @@ async function generateUnifiedTOMYKnowledge(
 - 例: "48時間限定・先着30名（逃すと6ヶ月待ち）"
 
 ## 4. キラーワードTOP30
-${JSON.stringify(TOMY_STYLE_KNOWLEDGE.KILLER_WORDS, null, 2)}
+${JSON.stringify(MrT_STYLE_KNOWLEDGE.KILLER_WORDS, null, 2)}
 
 ## 5. 8要素構成
 1. キャッチコピー（0-10%）
@@ -338,7 +338,7 @@ ${JSON.stringify(TOMY_STYLE_KNOWLEDGE.KILLER_WORDS, null, 2)}
     )
     .join('\n')
 
-  const prompt = `あなたは「TOMYスタイル黄金律」と「蓄積されたカスタムナレッジ」の両方を統合する最強のLP生成エージェントです。
+  const prompt = `あなたは「MrTスタイル黄金律」と「蓄積されたカスタムナレッジ」の両方を統合する最強のLP生成エージェントです。
 
 # 製品情報
 - 製品名: ${input.productName}
@@ -348,14 +348,14 @@ ${JSON.stringify(TOMY_STYLE_KNOWLEDGE.KILLER_WORDS, null, 2)}
 - After状態: ${input.afterState || '課題が解決'}
 - 信頼性: ${input.credibility || '実績あり'}
 
-${tomyKnowledge}
+${mrtKnowledge}
 
 ${customKnowledge}
 
 # 指示
-**必ずTOMYスタイル黄金律を100%適用**した上で、カスタムナレッジも組み込んでください。
+**必ずMrTスタイル黄金律を100%適用**した上で、カスタムナレッジも組み込んでください。
 
-目標TOMYスコア: **95点以上**
+目標MrTスコア: **95点以上**
 
 JSON形式で返してください:
 {
@@ -366,7 +366,7 @@ JSON形式で返してください:
       "section": "hero",
       "html": "<div>HTMLコンテンツ</div>",
       "keywords_used": ["使用したキラーワード"],
-      "patterns_applied": ["TOMYパターン", "カスタムナレッジ"]
+      "patterns_applied": ["MrTパターン", "カスタムナレッジ"]
     },
     {
       "section": "problem",
@@ -406,7 +406,7 @@ JSON形式で返してください:
     }
   ],
   "metadata": {
-    "tomy_score": 95,
+    "mrt_score": 95,
     "killer_words_count": 12,
     "contrast_multiplier": 120
   }

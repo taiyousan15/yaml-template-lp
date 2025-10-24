@@ -1,0 +1,187 @@
+meta:
+  title: "{{page_title}}"
+  description: "{{page_description}}"
+  generated_by: "LPデザイン分析agent"
+  analysis_id: "ana_sample123"
+  analysis_domains: 11
+  overall_score: 86.5
+
+design_tokens:
+  colors:
+    primary: "#4A3B5C"
+    secondary: "#7FE86C"
+    accent: "#FFD700"
+    background: "#FFFFFF"
+    text: "#1a1a2e"
+    text-light: "#666666"
+  typography:
+    font-primary: "'Noto Sans JP', sans-serif"
+    size-0: "14px"
+    size-1: "18px"
+    size-2: "24px"
+    size-3: "36px"
+    size-4: "48px"
+  spacing:
+    xs: "8px"
+    sm: "16px"
+    md: "24px"
+    lg: "32px"
+    xl: "48px"
+    xxl: "64px"
+  shadows:
+    shadow-0: "0 4px 6px rgba(0, 0, 0, 0.1)"
+    shadow-1: "0 8px 16px rgba(0, 0, 0, 0.15)"
+  borders:
+    radius-sm: "8px"
+    radius-md: "16px"
+    radius-lg: "9999px"
+  breakpoints:
+    sm: "640px"
+    md: "768px"
+    lg: "1024px"
+    xl: "1280px"
+  animations: {}
+
+hero:
+  background_color: "#4A3B5C"
+  background_image: "{{hero_background_image}}"
+  headline:
+    text: "{{hero_headline}}"
+    font_size: "48px"
+    font_family: "'Noto Sans JP', sans-serif"
+    color: "#FFFFFF"
+    line_height: "1.2"
+    margin_bottom: "32px"
+  subheadline:
+    text: "{{hero_subheadline}}"
+    font_size: "18px"
+    color: "#E0E0E0"
+    margin_bottom: "48px"
+  cta_button:
+    text: "{{hero_cta_text}}"
+    background_color: "#7FE86C"
+    text_color: "#FFFFFF"
+    border_radius: "9999px"
+    padding: "16px 32px"
+    hover_transform: "scale(1.05)"
+    transition: "all 0.3s ease"
+  layout:
+    padding: "80px 24px"
+    min_height: "100vh"
+    display: "flex"
+    align_items: "center"
+    justify_content: "center"
+
+features:
+  section_title:
+    text: "{{features_title}}"
+    font_size: "36px"
+    color: "#1a1a2e"
+    text_align: "center"
+    margin_bottom: "48px"
+  layout:
+    padding: "64px 24px"
+    display: "grid"
+    grid_columns: "repeat(auto-fit, minmax(300px, 1fr))"
+    gap: "32px"
+  items:
+    - icon: "{{feature_1_icon}}"
+      title: "{{feature_1_title}}"
+      description: "{{feature_1_description}}"
+      card_background: "#FFFFFF"
+      card_padding: "32px"
+      card_border_radius: "16px"
+      card_shadow: "0 4px 6px rgba(0, 0, 0, 0.1)"
+    - icon: "{{feature_2_icon}}"
+      title: "{{feature_2_title}}"
+      description: "{{feature_2_description}}"
+      card_background: "#FFFFFF"
+      card_padding: "32px"
+      card_border_radius: "16px"
+      card_shadow: "0 4px 6px rgba(0, 0, 0, 0.1)"
+    - icon: "{{feature_3_icon}}"
+      title: "{{feature_3_title}}"
+      description: "{{feature_3_description}}"
+      card_background: "#FFFFFF"
+      card_padding: "32px"
+      card_border_radius: "16px"
+      card_shadow: "0 4px 6px rgba(0, 0, 0, 0.1)"
+
+testimonials:
+  section_title:
+    text: "{{testimonials_title}}"
+    font_size: "36px"
+    color: "#1a1a2e"
+  items:
+    - name: "{{testimonial_1_name}}"
+      role: "{{testimonial_1_role}}"
+      comment: "{{testimonial_1_comment}}"
+      rating: 5
+      avatar: "{{testimonial_1_avatar}}"
+    - name: "{{testimonial_2_name}}"
+      role: "{{testimonial_2_role}}"
+      comment: "{{testimonial_2_comment}}"
+      rating: 5
+      avatar: "{{testimonial_2_avatar}}"
+
+pricing:
+  section_title:
+    text: "{{pricing_title}}"
+    font_size: "36px"
+  plans:
+    - name: "{{plan_1_name}}"
+      price: "{{plan_1_price}}"
+      features:
+        - "{{plan_1_feature_1}}"
+        - "{{plan_1_feature_2}}"
+        - "{{plan_1_feature_3}}"
+      cta_text: "{{plan_1_cta}}"
+      highlight: false
+    - name: "{{plan_2_name}}"
+      price: "{{plan_2_price}}"
+      features:
+        - "{{plan_2_feature_1}}"
+        - "{{plan_2_feature_2}}"
+        - "{{plan_2_feature_3}}"
+      cta_text: "{{plan_2_cta}}"
+      highlight: true
+
+faq:
+  section_title:
+    text: "{{faq_title}}"
+    font_size: "36px"
+  items:
+    - question: "{{faq_1_question}}"
+      answer: "{{faq_1_answer}}"
+    - question: "{{faq_2_question}}"
+      answer: "{{faq_2_answer}}"
+    - question: "{{faq_3_question}}"
+      answer: "{{faq_3_answer}}"
+
+cta:
+  background_color: "#4A3B5C"
+  headline:
+    text: "{{cta_headline}}"
+    font_size: "36px"
+    color: "#FFFFFF"
+  button:
+    text: "{{cta_button_text}}"
+    background_color: "#7FE86C"
+    text_color: "#FFFFFF"
+    border_radius: "9999px"
+    padding: "16px 48px"
+  padding: "64px 24px"
+
+footer:
+  background_color: "#1a1a2e"
+  text_color: "#FFFFFF"
+  company_name: "{{company_name}}"
+  links:
+    - text: "{{footer_link_1}}"
+      url: "{{footer_link_1_url}}"
+    - text: "{{footer_link_2}}"
+      url: "{{footer_link_2_url}}"
+    - text: "{{footer_link_3}}"
+      url: "{{footer_link_3_url}}"
+  copyright: "{{copyright_text}}"
+  padding: "32px 24px"

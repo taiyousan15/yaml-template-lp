@@ -1,0 +1,48 @@
+background_color: '#1a1a2e'
+children:
+- content: YAMLテンプレートシステム
+  fills:
+  - color: '#FFFFFF'
+    type: SOLID
+  font:
+    family: Noto Sans JP
+    size: 32
+    weight: Bold
+  type: Text
+- content: 画像から自動生成されたLPテンプレート 簡単にカスタマイズ可能
+  fills:
+  - color: '#CCCCCC'
+    type: SOLID
+  font:
+    family: Noto Sans JP
+    size: 16
+    weight: Regular
+  type: Text
+- background_color: '#F59E0B'
+  children:
+  - content: 今すぐ始める
+    fills:
+    - color: '#FFFFFF'
+      type: SOLID
+    font:
+      family: Noto Sans JP
+      size: 18
+      weight: Medium
+    type: Text
+  corner_radius: 6
+  layout_mode: HORIZONTAL
+  padding:
+    bottom: 12
+    left: 24
+    right: 24
+    top: 12
+  type: Frame
+corner_radius: 10
+layout_mode: VERTICAL
+padding:
+  bottom: 40
+  left: 40
+  right: 40
+  top: 40
+spacing: 20
+type: Frame

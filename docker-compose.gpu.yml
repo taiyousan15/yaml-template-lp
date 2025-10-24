@@ -1,0 +1,76 @@
+# Docker Compose設定（GPU版 - DeepSeek-OCR + Claude API）
+# NVIDIA Docker Runtime が必要
+
+services:
+  app-gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile.gpu
+    image: yaml-template-lp:gpu
+    container_name: yaml-lp-app-gpu
+    ports:
+      - "3002:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - CUDA_VISIBLE_DEVICES=0
+      # 環境変数は.envファイルから読み込み
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - DATABASE_URL=${DATABASE_URL:-}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
+      - AWS_REGION=${AWS_REGION:-us-east-1}
+      - S3_BUCKET_NAME=${S3_BUCKET_NAME:-}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY:-}
+      - STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY:-}
+      - NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:-}
+      # DeepSeek-OCR設定
+      - HF_HOME=/app/.cache/huggingface
+      - TRANSFORMERS_CACHE=/app/.cache/huggingface
+    env_file:
+      - .env
+    volumes:
+      # ログやデータの永続化
+      - ./logs:/app/logs
+      - ./reports:/app/reports
+      # モデルキャッシュ（永続化推奨：初回ダウンロード10GB）
+      - model-cache-gpu:/app/.cache
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    runtime: nvidia
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s  # モデルロード時間を考慮
+
+  # PostgreSQL (オプション)
+  # database:
+  #   image: postgres:15-alpine
+  #   container_name: yaml-lp-db-gpu
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme}
+  #     POSTGRES_DB: yaml_lp_db
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres-data-gpu:/var/lib/postgresql/data
+  #   restart: unless-stopped
+
+volumes:
+  model-cache-gpu:
+    driver: local
+  # postgres-data-gpu:
+  #   driver: local
+
+networks:
+  default:
+    name: yaml-lp-network-gpu
