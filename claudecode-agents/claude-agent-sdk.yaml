@@ -1,0 +1,65 @@
+project: ClaudeCode-42Agents
+entrypoint: main_graph.py
+runtime:
+  python: ">=3.11"
+  environment: virtualenv
+
+agents:
+  - id: orchestrator
+    path: core/coordinator/main.py
+    role: "Orchestrator"
+    tools: ["bash", "git", "tmux", "pytest", "python"]
+
+  - id: auth
+    path: core/auth/main.py
+    role: "Auth (A-JWT)"
+    tools: ["python"]
+
+  - id: rag
+    path: core/rag/main.py
+    role: "Knowledge Retrieval"
+    tools: ["python"]
+
+  - id: blackboard
+    path: core/blackboard/main.py
+    role: "Shared State"
+    tools: ["python"]
+
+  - id: evaluator
+    path: core/evaluator/main.py
+    role: "Best-of-N Evaluator"
+    tools: ["bash", "git", "pytest", "python"]
+
+security:
+  zero_trust: true
+  auth_rules:
+    allow:
+      - "git worktree*"
+      - "tmux*"
+      - "pytest*"
+      - "python*"
+    deny:
+      - "rm -rf*"
+      - "curl*"
+      - "scp*"
+      - "wget*"
+
+orchestration:
+  control_plane: tmux
+  parallelism: 4
+
+evaluation:
+  metrics:
+    - test_pass_rate
+    - code_length_diff
+    - complexity
+    - doc_consistency
+  decision_rule: "0.5*pass + 0.2*(1-diff) + 0.2*(1-cplx) + 0.1*doc"
+
+logging:
+  unified: true
+  files:
+    - deliverable/reporting/blackboard_log.md
+
+packaging:
+  output_zip: deliverable/packaging/claudecode-agents.zip

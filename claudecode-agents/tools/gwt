@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="${ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || echo .)}"
+WORKTREES_DIR="${WORKTREES_DIR:-$ROOT/worktrees}"
+SESSION="${SESSION:-claude_competition}"
+BASE_BRANCH="${BASE_BRANCH:-main}"
+DEFAULT_N="${DEFAULT_N:-3}"
+
+trap 'echo "[gwt] interrupted"; tmux has-session -t "$SESSION" 2>/dev/null && tmux kill-session -t "$SESSION" || true' INT TERM
+
+usage() {
+  cat <<USAGE
+gwt — git worktree + tmux オーケストレーション
+Usage:
+  gwt init [N]           # try-1..try-N を作成
+  gwt run [all|ID]       # 全員 or try-ID を起動
+  gwt status             # 状況表示
+  gwt attach             # tmuxへ接続
+  gwt cleanup            # tmux停止＋参照整理
+  gwt merge [ID|file]    # 勝者を main にマージ
+  gwt help
+USAGE
+}
+
+ensure_repo() { git -C "$ROOT" rev-parse --git-dir >/dev/null 2>&1 || { echo "not a git repo"; exit 1; }; }
+
+cmd_init() {
+  ensure_repo; local N="${1:-$DEFAULT_N}"
+  mkdir -p "$WORKTREES_DIR"
+  for i in $(seq 1 "$N"); do
+    local name="try-$i" path="$WORKTREES_DIR/$name"
+    if [ -d "$path" ]; then echo "[skip] $path exists"; continue; fi
+    echo "[add] $name"
+    git -C "$ROOT" worktree add -b "$name" "$path" "$BASE_BRANCH"
+  done
+  git -C "$ROOT" worktree list
+}
+
+start_one() {
+  local name="$1" path="$WORKTREES_DIR/$name"
+  [ -d "$path" ] || { echo "no such worktree: $name"; return 1; }
+  tmux new-session -d -s "$SESSION" -n "$name" "cd \"$path\" && python3 -m pytest -q || true" 2>/dev/null || \
+    tmux new-window  -t "$SESSION" -n "$name" "cd \"$path\" && python3 -m pytest -q || true"
+}
+
+cmd_run() {
+  ensure_repo
+  tmux has-session -t "$SESSION" 2>/dev/null || tmux new-session -d -s "$SESSION" -n "boot" "echo boot"
+  if [ "${1:-all}" = "all" ]; then
+    for d in "$WORKTREES_DIR"/try-*; do [ -d "$d" ] && start_one "$(basename "$d")"; done
+  else
+    start_one "$1"
+  fi
+  tmux select-layout -t "$SESSION" tiled || true
+  echo "run complete. use: gwt attach"
+}
+
+cmd_status() {
+  echo "== worktrees =="; git -C "$ROOT" worktree list --porcelain
+  echo "== tmux =="; tmux list-sessions 2>/dev/null || echo "(no sessions)"
+}
+
+cmd_attach() { tmux attach -t "$SESSION"; }
+
+cmd_cleanup() {
+  tmux has-session -t "$SESSION" 2>/dev/null && tmux kill-session -t "$SESSION" || true
+  git -C "$ROOT" worktree prune
+  echo "cleaned."
+}
+
+cmd_merge() {
+  ensure_repo
+  local target="${1:-deliverable/reporting/winner.txt}"
+  local name
+  if [ -f "$target" ]; then name="$(cat "$target" | tr -d ' \n')" ; else name="$target"; fi
+  [ -n "$name" ] || { echo "no winner"; exit 1; }
+  echo "Merging $name -> $BASE_BRANCH"
+  git -C "$ROOT" checkout "$BASE_BRANCH"
+  git -C "$ROOT" merge --no-ff "$name" -m "merge winner: $name"
+}
+
+case "${1:-help}" in
+  init) shift; cmd_init "$@";;
+  run) shift; cmd_run "$@";;
+  status) cmd_status;;
+  attach) cmd_attach;;
+  cleanup) cmd_cleanup;;
+  merge) shift; cmd_merge "$@";;
+  help|*) usage;;
+esac
